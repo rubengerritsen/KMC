@@ -20,11 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Particle.h" />
+    <ClInclude Include="include\PBC.h" />
+    <ClInclude Include="include\RateEngine.h" />
     <ClInclude Include="include\Site.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Particle.cpp" />
+    <ClCompile Include="src\PBC.cpp" />
+    <ClCompile Include="src\RateEngine.cpp" />
     <ClCompile Include="src\Site.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -15,6 +15,7 @@
 #include <cmath>
 #include "Particle.h"
 #include "Site.h"
+#include "PBC.h"
 
 
 std::vector<Site> siteList;
@@ -147,9 +148,15 @@ void findNextEvent() {
 
 
 int main() {
-	initializeSites();
-	initializeNeighboursAndRates();
-	initializeParticles();
+	//initializeSites();
+	//initializeNeighboursAndRates();
+	//initializeParticles();
+
+	Eigen::Vector3d v(1, 2, 1.3), w(1.3, 2.1, -0.3);
+	PBC pbc{2, 2, 2};
+
+	std::cout << pbc.dr_3vector(v, w);
+
 
 
 

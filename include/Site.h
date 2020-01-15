@@ -3,6 +3,7 @@
 #include <array>
 #include <Eigen/Dense>
 #include "Particle.h"
+#include "PBC.h"
 
 
 enum PType;
@@ -11,7 +12,9 @@ class Site {
 public:
 	Site(Eigen::Vector3d coord, std::vector<double> energies);
 	double getEnergy(PType pType) const { return energies[pType]; }
+	double xDistFrom(Site otherSite) const { return coord[0] - otherSite.getCoordinates()[0]; }
 	const Eigen::Vector3d& getCoordinates() const { return coord; }
+	//Eigen::Vector3d dr_from(Site& otherSite) const { return pbc.dr_3vector(otherSite.getCoordinates(), coord); }
 
 	void addSRNeighbour(int nb) {sRNeighbours.push_back(nb); }
 	void addLRNeighbour(int nb) {lRNeighbours.push_back(nb); }
@@ -34,6 +37,7 @@ private:
 	std::vector<double> lRRates;
 	std::array<bool, 4> occupied {false};
 	std::array<double,4> totalRates { 0 };
+	static PBC pbc;
 };
 
 std::ostream& operator<<(std::ostream& os, const Site& st);
