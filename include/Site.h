@@ -5,11 +5,12 @@
 #include "Particle.h"
 
 
+enum PType;
 
 class Site {
 public:
 	Site(Eigen::Vector3d coord, std::vector<double> energies);
-	double getEnergy(PType pType) const { return energies[int(pType)]; }
+	double getEnergy(PType pType) const { return energies[pType]; }
 	const Eigen::Vector3d& getCoordinates() const { return coord; }
 
 	void addSRNeighbour(int nb) {sRNeighbours.push_back(nb); }

@@ -2,6 +2,7 @@
 #include "Site.h"
 #include <vector>
 #include <iostream>
+#include "Particle.h"
 
 Site::Site(Eigen::Vector3d coord, std::vector<double> energies) : coord(coord), energies(energies)
 {
@@ -21,17 +22,17 @@ void Site::computeTotals() {
 		totalRate += nbRate;
 	}
 	totalRates[PType::elec] = totalRate;
-	double totalRate = 0.0;
+	totalRate = 0.0;
 	for (auto& nbRate : sRRates[PType::hole]) {
 		totalRate += nbRate;
 	}
 	totalRates[PType::hole] = totalRate;
-	double totalRate = 0.0;
+	totalRate = 0.0;
 	for (auto& nbRate : sRRates[PType::trip]) {
 		totalRate += nbRate;
 	}
 	totalRates[PType::trip] = totalRate;
-	double totalRate = 0.0;
+	totalRate = 0.0;
 	for (auto& nbRate : lRRates) {
 		totalRate += nbRate;
 	}

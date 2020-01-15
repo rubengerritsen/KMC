@@ -16,6 +16,7 @@
 #include "Particle.h"
 #include "Site.h"
 
+
 std::vector<Site> siteList;
 std::vector<Particle> particleList;
 std::mt19937_64 rng(12345);
@@ -27,7 +28,6 @@ std::normal_distribution<double> sing_DOS(5.0, 2.0);
 std::normal_distribution<double> trip_DOS(5.0, 2.0); 
 std::uniform_int_distribution<int> siteDist(0, 511);
 std::uniform_real_distribution<double> uniform(0.0, 1.0);
-
 
 void initializeSites() {
 	std::string filename{ "sites.txt" };
@@ -130,14 +130,14 @@ void initializeParticles() {
 void findNextEvent() {
 	double totalRate = 0;
 	for (auto& part : particleList) {
-		totalRate += siteList[part.getLocation].getTotalOutRate(PType::elec);
+		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 	}
 	double select = totalRate * uniform(rng);
 	totalRate = 0;
 	for (auto& part : particleList) {
-		totalRate += siteList[part.getLocation].getTotalOutRate(PType::elec);
+		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 		if (totalRate >= select) {
-			part.jump();
+
 		}
 	}
 

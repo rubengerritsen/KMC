@@ -2,7 +2,8 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include "Site.h"
-enum PType { elec = 0, hole = 1, trip = 2, sing = 3 };
+
+enum PType {elec=0, hole=1, trip=2, sing=3};
 
 class Particle {
 public:
@@ -10,7 +11,6 @@ public:
 	PType getType() const { return type; }
 	double distanceTravelled() const { return dr_travelled.norm(); }
 	int getLocation() const { return location; }
-	void jump(Site:)
 
 private:
 	int location;
