@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <Eigen/Dense>
 #include "Particle.h"
 
@@ -30,9 +31,8 @@ private:
 	std::vector<int> lRNeighbours; // lR = long Range (for Förster transport)
 	std::array<std::vector<double>,3> sRRates;
 	std::vector<double> lRRates;
-	std::array<bool,4> 
-	bool occupied[4] = {false};
-	double totalRates[4] = { 0 };
+	std::array<bool, 4> occupied {false};
+	std::array<double,4> totalRates { 0 };
 };
 
 std::ostream& operator<<(std::ostream& os, const Site& st);
