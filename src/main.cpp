@@ -33,7 +33,7 @@ double kBT{ 0.026 };
 PBC pbc(67.821, 67.821, 67.821);
 RateEngine rate_engine(v0, alpha, charge, E_Field, kBT, pbc);
 
-std::normal_distribution<double> elec_DOS(0, 0.000000000001);
+std::normal_distribution<double> elec_DOS(0, 0.026);
 std::normal_distribution<double> hole_DOS(0, 0.026);
 std::normal_distribution<double> sing_DOS(0, 0.026);
 std::normal_distribution<double> trip_DOS(0, 0.026);
@@ -106,7 +106,7 @@ void initializeNeighboursAndRates() {
 void initializeParticles() {
 	Particle* tempParticle;
 	int location = 0;
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 1; ++i) {
 		location = siteDist(rng);
 		while (siteList[location].isOccupied(PType::elec)) { //Get a unique location
 			location = siteDist(rng);
@@ -133,9 +133,8 @@ void findAndExecuteNextEvent() {
 		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 		if (totalRate >= select) {
 			newLocation = siteList[part.getLocation()].getNextHop(uniform(rng), part.getType());
-			std::cout << "We created a new event, time to celebrate! nE: " <<newLocation << std::endl;
 			oldLocation = part.getLocation();
-			part.jumpTo(3, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));
+			part.jumpTo(newLocation, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));
 			siteList[oldLocation].freeSite(part.getType(), time);
 			siteList[newLocation].setOccupied(part.getType(), time);
 			break;
@@ -162,7 +161,7 @@ void printSiteOccupation() {
 
 
 int main() {
-	int maxSteps = 10000;
+	int maxSteps = 1000000;
 	initializeSites();
 	initializeNeighboursAndRates();
 	initializeParticles();
