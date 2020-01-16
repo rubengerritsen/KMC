@@ -38,3 +38,27 @@ void Site::computeTotals() {
 	}
 	totalRates[PType::sing] = totalRate;
 }
+
+/* Takes in a uniform random number [0,1) and returns the site to jump to. */
+int Site::getNextHop(double uniform, PType type) {
+	double select = uniform * totalRates[type];
+	double rateSum = 0;
+	if (type == PType::sing) {
+		for (unsigned int i=0; i < lRRates.size(); ++i) {
+			rateSum += lRRates[i];
+			if (rateSum >= select) {
+				return lRNeighbours[i];
+			}
+		}
+	}
+	else {
+		for (unsigned int i=0; i < sRRates[type].size(); ++i) {
+			rateSum += sRRates[type][i];
+			if (rateSum >= select) {
+				return sRNeighbours[i];
+			}
+		}
+	}
+	std::cout << "getNextHop was unsuccessful" << std::endl; 
+	exit(EXIT_FAILURE);
+}

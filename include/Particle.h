@@ -11,6 +11,7 @@ public:
 	PType getType() const { return type; }
 	double distanceTravelled() const { return dr_travelled.norm(); }
 	int getLocation() const { return location; }
+	void jumpTo(int loc, Eigen::Vector3d dr) { location = loc; dr_travelled += dr; }
 
 private:
 	int location;

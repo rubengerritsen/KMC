@@ -1,17 +1,2 @@
 ﻿  main.cpp
-  Particle.cpp
-  RateEngine.cpp
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(19,84): error C2662: 'Eigen::Vector3d PBC::dr_3vector(const Eigen::Vector3d &,const Eigen::Vector3d &)': cannot convert 'this' pointer from 'const PBC' to 'PBC &'
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(19,19): message : Conversion loses qualifiers
-C:\Users\s134864\source\repos\KMC\KMC\include\PBC.h(23,21): message : see declaration of 'PBC::dr_3vector'
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(29,72): error C2065: 'type': undeclared identifier
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(29,97): error C2065: 'type': undeclared identifier
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(30,84): error C2662: 'Eigen::Vector3d PBC::dr_3vector(const Eigen::Vector3d &,const Eigen::Vector3d &)': cannot convert 'this' pointer from 'const PBC' to 'PBC &'
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(30,19): message : Conversion loses qualifiers
-C:\Users\s134864\source\repos\KMC\KMC\include\PBC.h(23,21): message : see declaration of 'PBC::dr_3vector'
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(32,19): error C2065: 'type': undeclared identifier
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(32,42): error C2065: 'type': undeclared identifier
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(35,19): error C2065: 'type': undeclared identifier
-C:\Users\s134864\source\repos\KMC\KMC\src\RateEngine.cpp(35,42): error C2065: 'type': undeclared identifier
-  Site.cpp
-  Generating Code...
+  KMC.vcxproj -> C:\Users\s134864\source\repos\KMC\Debug\KMC.exe

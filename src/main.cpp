@@ -16,13 +16,21 @@
 #include "Particle.h"
 #include "Site.h"
 #include "PBC.h"
+#include "RateEngine.h"
 
 
 std::vector<Site> siteList;
 std::vector<Particle> particleList;
 std::mt19937_64 rng(12345);
 
+std::array<double, 4> v0 {1, 1, 1, 1};
+std::array<double, 4> alpha { 0.1, 0.1, 0.1, 0.1 };
+std::array<double, 4> charge{ -1, -1, -1, -1 };
+double E_Field{ 0.0 };
+double kBT{ 0.026 };
+
 PBC pbc(67.821, 67.821, 67.821);
+RateEngine rate_engine(v0, alpha, charge, E_Field, kBT, pbc);
 
 std::normal_distribution<double> elec_DOS(5.0, 2.0);
 std::normal_distribution<double> hole_DOS(5.0, 2.0);
@@ -32,7 +40,7 @@ std::uniform_int_distribution<int> siteDist(0, 511);
 std::uniform_real_distribution<double> uniform(0.0, 1.0);
 
 void initializeSites() {
-	std::string filename{ "sites.txt" };
+	std::string filename{ "./input/sites.txt" };
 	std::ifstream myfile(filename);
 	Site *tempSite;
 	Eigen::Vector3d tempCoord;
@@ -59,33 +67,30 @@ void initializeSites() {
 	}
 }
 
-Eigen::Vector3d dr_PBC_corrected(const Eigen::Vector3d& v, const Eigen::Vector3d& w, const Eigen::Vector3d& boxDimension) {
-	return v.array() - w.array() - floor((v.array() - w.array()) / boxDimension.array() + 0.5) * boxDimension.array();
-}
 
 void initializeNeighboursAndRates() {
-	Eigen::Vector3d dr(0,0,0), simBoxDimensions(67.821, 67.821, 67.821);
-	double dist;
 	double lR_cutOff = 25.0, sR_cutOff = 15.0;
+	Eigen::Vector3d dr;
+	double dist = 0;
 
 	for (unsigned int i = 0; i < siteList.size(); ++i){
 		for (unsigned int j = i + 1; j < siteList.size(); ++j) {
-			dr = dr_PBC_corrected(siteList[i].getCoordinates(), siteList[j].getCoordinates(), simBoxDimensions);
+			dr = pbc.dr_PBC_corrected(siteList[i].getCoordinates(), siteList[j].getCoordinates());
 			dist = dr.norm();
 			if (dist <= lR_cutOff) {
 				siteList[i].addLRNeighbour(j);
-				siteList[i].addLRRate(dexterRate(dist, dr[0], siteList[i].getEnergy(PType::elec), siteList[j].getEnergy(PType::elec), 1, 0.15, 0.0));
+				siteList[i].addLRRate(rate_engine.dexter(siteList[i], siteList[j]));
 				siteList[j].addLRNeighbour(i);
-				siteList[i].addLRRate(dexterRate(dist, dr[0], siteList[j].getEnergy(PType::elec), siteList[i].getEnergy(PType::elec), 1, 0.15, 0.0));
+				siteList[j].addLRRate(rate_engine.dexter(siteList[j], siteList[i]));
 				if (dist <= sR_cutOff) {
 					siteList[i].addSRNeighbour(j);
-					siteList[i].addSRRate(PType::elec, millerAbrahamsRate(dist, dr[0], siteList[i].getEnergy(PType::elec), siteList[j].getEnergy(PType::elec), 1, 0.15, 0.0)); 
-					siteList[i].addSRRate(PType::hole, millerAbrahamsRate(dist, dr[0], siteList[i].getEnergy(PType::hole), siteList[j].getEnergy(PType::hole), 1, 0.15, 0.0));
-					siteList[i].addSRRate(PType::trip, millerAbrahamsRate(dist, dr[0], siteList[i].getEnergy(PType::trip), siteList[j].getEnergy(PType::trip), 1, 0.15, 0.0));
+					siteList[i].addSRRate(PType::elec, rate_engine.millerAbrahams(siteList[i], siteList[j], PType::elec)); 
+					siteList[i].addSRRate(PType::hole, rate_engine.millerAbrahams(siteList[i], siteList[j], PType::hole));
+					siteList[i].addSRRate(PType::trip, rate_engine.millerAbrahams(siteList[i], siteList[j], PType::trip));
 					siteList[j].addSRNeighbour(i);
-					siteList[i].addSRRate(PType::elec, millerAbrahamsRate(dist, dr[0], siteList[i].getEnergy(PType::elec), siteList[j].getEnergy(PType::elec), 1, 0.15, 0.0));
-					siteList[i].addSRRate(PType::hole, millerAbrahamsRate(dist, dr[0], siteList[i].getEnergy(PType::hole), siteList[j].getEnergy(PType::hole), 1, 0.15, 0.0));
-					siteList[i].addSRRate(PType::trip, millerAbrahamsRate(dist, dr[0], siteList[i].getEnergy(PType::trip), siteList[j].getEnergy(PType::trip), 1, 0.15, 0.0));
+					siteList[j].addSRRate(PType::elec, rate_engine.millerAbrahams(siteList[j], siteList[i], PType::elec));
+					siteList[j].addSRRate(PType::hole, rate_engine.millerAbrahams(siteList[j], siteList[i], PType::hole));
+					siteList[j].addSRRate(PType::trip, rate_engine.millerAbrahams(siteList[j], siteList[i], PType::trip));
 				}
 			}
 		}
@@ -94,7 +99,6 @@ void initializeNeighboursAndRates() {
 		site.computeTotals();
 	}
 }
-
 
 void initializeParticles() {
 	Particle* tempParticle;
@@ -105,12 +109,15 @@ void initializeParticles() {
 			location = siteDist(rng);
 		}
 		tempParticle = new Particle(location, PType::elec);
+		particleList.push_back(*tempParticle);
 		siteList[location].setOccupied(PType::elec);
 	}
 }
 
-void findNextEvent() {
+void findAndExecuteNextEvent() {
 	double totalRate = 0;
+	int newLocation;
+	int oldLocation;
 	for (auto& part : particleList) {
 		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 	}
@@ -119,27 +126,27 @@ void findNextEvent() {
 	for (auto& part : particleList) {
 		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 		if (totalRate >= select) {
-
+			newLocation = siteList[part.getLocation()].getNextHop(uniform(rng), part.getType());
+			std::cout << "We created a new event, time to celebrate! nE: " <<newLocation << std::endl;
+			oldLocation = part.getLocation();
+			part.jumpTo(3, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));
+			siteList[oldLocation].freeSite(part.getType());
+			siteList[newLocation].setOccupied(part.getType());
+			break;
 		}
 	}
-
+	std::cout << "No new event was found" << std::endl;
+	exit(EXIT_FAILURE);
 }
 
 
 
 
 int main() {
-	//initializeSites();
-	//initializeNeighboursAndRates();
-	//initializeParticles();
-
-	Eigen::Vector3d v(1, 2, 1.3), w(1.3, 2.1, -0.3);
-	PBC pbc{2, 2, 2};
-
-	std::cout << pbc.dr_3vector(v, w);
-
-
-
+	initializeSites();
+	initializeNeighboursAndRates();
+	initializeParticles();
+	findAndExecuteNextEvent();
 
     return 0;
 }

@@ -13,6 +13,7 @@
 
 #pragma once
 #include <Eigen/Dense>
+#include "Site.h"
 
 class PBC {
 public:
