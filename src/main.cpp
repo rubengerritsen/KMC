@@ -13,6 +13,7 @@
 #include <vector>
 #include <random>
 #include <cmath>
+#include <fstream>
 #include "Particle.h"
 #include "Site.h"
 #include "PBC.h"
@@ -21,10 +22,10 @@
 
 std::vector<Site> siteList;
 std::vector<Particle> particleList;
-std::mt19937_64 rng(12345);
+std::mt19937_64 rng(145);
 
-std::array<double, 4> v0 {1, 1, 1, 1};
-std::array<double, 4> alpha { 0.1, 0.1, 0.1, 0.1 };
+std::array<double, 4> v0 {100000, 1, 1, 1};
+std::array<double, 4> alpha { 0.000008, 0.1, 0.1, 0.1 };
 std::array<double, 4> charge{ -1, -1, -1, -1 };
 double E_Field{ 0.0 };
 double kBT{ 0.026 };
@@ -32,12 +33,14 @@ double kBT{ 0.026 };
 PBC pbc(67.821, 67.821, 67.821);
 RateEngine rate_engine(v0, alpha, charge, E_Field, kBT, pbc);
 
-std::normal_distribution<double> elec_DOS(5.0, 2.0);
-std::normal_distribution<double> hole_DOS(5.0, 2.0);
-std::normal_distribution<double> sing_DOS(5.0, 2.0);
-std::normal_distribution<double> trip_DOS(5.0, 2.0); 
+std::normal_distribution<double> elec_DOS(0, 0.000000000001);
+std::normal_distribution<double> hole_DOS(0, 0.026);
+std::normal_distribution<double> sing_DOS(0, 0.026);
+std::normal_distribution<double> trip_DOS(0, 0.026);
 std::uniform_int_distribution<int> siteDist(0, 511);
 std::uniform_real_distribution<double> uniform(0.0, 1.0);
+
+double time = 0;
 
 void initializeSites() {
 	std::string filename{ "./input/sites.txt" };
@@ -110,7 +113,7 @@ void initializeParticles() {
 		}
 		tempParticle = new Particle(location, PType::elec);
 		particleList.push_back(*tempParticle);
-		siteList[location].setOccupied(PType::elec);
+		siteList[location].setOccupied(PType::elec, 0.0);
 	}
 }
 
@@ -121,6 +124,9 @@ void findAndExecuteNextEvent() {
 	for (auto& part : particleList) {
 		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 	}
+
+	time += -(1.0 / totalRate) * log(uniform(rng));
+
 	double select = totalRate * uniform(rng);
 	totalRate = 0;
 	for (auto& part : particleList) {
@@ -130,23 +136,40 @@ void findAndExecuteNextEvent() {
 			std::cout << "We created a new event, time to celebrate! nE: " <<newLocation << std::endl;
 			oldLocation = part.getLocation();
 			part.jumpTo(3, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));
-			siteList[oldLocation].freeSite(part.getType());
-			siteList[newLocation].setOccupied(part.getType());
+			siteList[oldLocation].freeSite(part.getType(), time);
+			siteList[newLocation].setOccupied(part.getType(), time);
 			break;
 		}
 	}
-	std::cout << "No new event was found" << std::endl;
-	exit(EXIT_FAILURE);
+}
+
+void printSiteOccupation() {
+	std::ofstream outFile;
+	std::string outputFile = "output/occ.txt";
+	outFile.open(outputFile);
+	if (outFile.is_open()) {
+		for (auto& site : siteList) {
+			outFile << site.getEnergy(PType::elec) << " " << site.getOccupation(PType::elec, time) << std::endl;
+		}
+	}
+	else {
+		std::cout << "Could not open output file: " << outputFile << std::endl;
+	}
+	outFile.close();
 }
 
 
 
 
 int main() {
+	int maxSteps = 10000;
 	initializeSites();
 	initializeNeighboursAndRates();
 	initializeParticles();
-	findAndExecuteNextEvent();
+	for (int step = 0; step < maxSteps; ++step) {
+		findAndExecuteNextEvent();
+	}
+	printSiteOccupation();
 
     return 0;
 }

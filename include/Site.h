@@ -19,11 +19,12 @@ public:
 	void addSRRate(PType type, double rate) { sRRates[type].push_back(rate); }
 	void addLRRate(double rate) { lRRates.push_back(rate); }
 	bool isOccupied(PType type) const { return occupied[type]; }
-	void setOccupied(PType type) { occupied[type] = true; }
-	void freeSite(PType type) { occupied[type] = false; }
+	void setOccupied(PType type, double time) { occupied[type] = true; startOccupation[type] = time; }
+	void freeSite(PType type, double time) { occupied[type] = false; totalOccupation[type] += (time - startOccupation[type]); }
 	void computeTotals();
 	double getTotalOutRate(PType type) { return totalRates[type]; }
 	int getNextHop(double uniform, PType type);
+	double getOccupation(PType type, double time) { return occupied[type] ? totalOccupation[type] += (time - startOccupation[type]) : totalOccupation[type]; }
 
 private:
 	std::vector<double> energies;
@@ -35,6 +36,8 @@ private:
 	std::array<bool, 4> occupied {false};
 	std::array<double,4> totalRates { 0 };
 	static PBC pbc;
+	std::array<double, 4> startOccupation{ 0 };
+	std::array<double, 4> totalOccupation{ 0 };
 };
 
 std::ostream& operator<<(std::ostream& os, const Site& st);
