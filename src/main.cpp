@@ -22,6 +22,7 @@ std::vector<Site> siteList;
 std::vector<Particle> particleList;
 std::mt19937_64 rng(12345);
 
+PBC pbc(67.821, 67.821, 67.821);
 
 std::normal_distribution<double> elec_DOS(5.0, 2.0);
 std::normal_distribution<double> hole_DOS(5.0, 2.0);
@@ -60,26 +61,6 @@ void initializeSites() {
 
 Eigen::Vector3d dr_PBC_corrected(const Eigen::Vector3d& v, const Eigen::Vector3d& w, const Eigen::Vector3d& boxDimension) {
 	return v.array() - w.array() - floor((v.array() - w.array()) / boxDimension.array() + 0.5) * boxDimension.array();
-}
-
-double millerAbrahamsRate(double dist, double distX, double energy1, double energy2, double v0, double alpha, double E_Field) {
-	static double kBT = 0.026;
-	if (energy2 - energy1 + E_Field * (distX) <= 0) {
-		return v0 * exp(-2 * alpha * dist);
-	}
-	else {
-		return v0 * exp(-2 * alpha * dist - (energy2 - energy1 + E_Field * (distX)) / kBT);
-	}
-}
-
-double dexterRate(double dist, double distX, double energy1, double energy2, double v0, double alpha, double E_Field) {
-	static double kBT = 0.026;
-	if (energy2 - energy1 + E_Field * (distX) <= 0) {
-		return v0 * pow((alpha / dist),6);
-	}
-	else {
-		return v0 * pow((alpha / dist), 6)* exp(- (energy2 - energy1 + E_Field * (distX)) / kBT);
-	}
 }
 
 void initializeNeighboursAndRates() {

@@ -12,7 +12,6 @@ class Site {
 public:
 	Site(Eigen::Vector3d coord, std::vector<double> energies);
 	double getEnergy(PType pType) const { return energies[pType]; }
-	double xDistFrom(Site otherSite) const { return coord[0] - otherSite.getCoordinates()[0]; }
 	const Eigen::Vector3d& getCoordinates() const { return coord; }
 	//Eigen::Vector3d dr_from(Site& otherSite) const { return pbc.dr_3vector(otherSite.getCoordinates(), coord); }
 

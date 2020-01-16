@@ -17,5 +17,4 @@ private:
 	PType type;
 	int energyLevel;
 	Eigen::Vector3d dr_travelled;
-
 };

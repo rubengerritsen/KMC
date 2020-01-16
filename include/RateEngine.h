@@ -15,9 +15,13 @@
 #include <array>
 #include "Site.h"
 #include "Particle.h"
+#include "PBC.h"
 
 class RateEngine {
 public:
+    RateEngine(std::array<double, 4> v0, std::array<double, 4> alpha, std::array<double, 4> charge, double E_Field, double kBT, PBC& pbc) : 
+        v0(v0), alpha(alpha), charge(charge), E_Field(E_Field), kBT(kBT), pbc(pbc) {};
+
     double millerAbrahams(const Site& siteOne, const Site& siteTwo, const PType type) const;
     double dexter(const Site& siteOne, const Site& siteTwo) const;
 
@@ -28,7 +32,5 @@ private:
     std::array<double, 4> charge;
     double E_Field;
     double kBT;
-
-
-
+    PBC pbc;
 };
