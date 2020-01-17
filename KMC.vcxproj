@@ -19,17 +19,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\RandomEngine.h" />
     <ClInclude Include="include\Particle.h" />
     <ClInclude Include="include\PBC.h" />
     <ClInclude Include="include\PType.h" />
     <ClInclude Include="include\RateEngine.h" />
+    <ClInclude Include="include\SingleRun.h" />
     <ClInclude Include="include\Site.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\RandomEngine.cpp" />
+    <ClCompile Include="src\main.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="src\Particle.cpp" />
     <ClCompile Include="src\PBC.cpp" />
     <ClCompile Include="src\RateEngine.cpp" />
+    <ClCompile Include="src\SingleRun.cpp" />
     <ClCompile Include="src\Site.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

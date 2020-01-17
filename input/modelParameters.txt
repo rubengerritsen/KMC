@@ -1,7 +1,7 @@
-SEED 15
+SEED 12345
 nrOfSteps 200000
 sR_CutOff 20
-lR_CutOff
+lR_CutOff 35
 Xmax 67.821
 Ymax 67.821
 Zmax 67.821

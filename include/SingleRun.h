@@ -1,0 +1,52 @@
+/***************************************************
+ *
+ * KMC MODEL FOR OPTOELECTRIC PROCESSES
+ *
+ * Author: Ruben Gerritsen
+ *
+ * Created on 14-01-2020
+ *
+ * This class contains all functions necessary to
+ * perform a single monte-carlo simulation
+ **************************************************/
+
+#include <string>
+#include "RateEngine.h"
+#include "PBC.h"
+#include "RandomEngine.h"
+#include <fstream>
+
+class SingleRun {
+public:
+    SingleRun(RateEngine rate_engine, PBC pbc, RandomEngine random_engine, int nrOfSteps, std::string siteFile) :
+        rate_engine(rate_engine), pbc(pbc), random_engine(random_engine), nrOfSteps(nrOfSteps){};
+    void runSimulation();
+
+
+private:
+    RateEngine rate_engine;
+    PBC pbc;
+    RandomEngine random_engine;
+
+    /* Storage for the graph and particles */
+    std::vector<Site> siteList;
+    std::vector<Particle> particleList;
+
+    int nrOfSteps;
+    std::string siteFile;
+    std::string outputFile = "./output/occ.txt";
+
+    /* Some additional model parameters */
+    double lR_cutOff = 25.0;
+    double sR_cutOff = 15.0;
+    double totalTime = 0.0;
+
+    /* Helper functions */
+    void initializeSites();
+    void initializeNeighboursAndRates();
+    void initializeParticles();
+    void findAndExecuteNextEvent();
+    void printSiteOccupation();
+
+
+};
