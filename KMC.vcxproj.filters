@@ -27,6 +27,9 @@
     <ClInclude Include="include\PBC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\PType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

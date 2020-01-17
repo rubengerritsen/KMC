@@ -1,0 +1,34 @@
+SEED 15
+nrOfSteps 200000
+sR_CutOff 20
+lR_CutOff
+Xmax 67.821
+Ymax 67.821
+Zmax 67.821
+elec_qt 6
+elec_v0
+elec_DOS_mu 1.5
+elec_DOS_sigma 0.026
+elec_charge -1.0
+elec_v0 1
+elec_alpha 0.15
+hole_qt 6
+hole_DOS_mu 1.5
+hole_DOS_sigma 0.026
+hole_charge 1.0
+hole_v0 1
+hole_alpha 0.15
+trip_qt 0
+trip_DOS_mu 1.5
+trip_DOS_sigma 0.026
+trip_charge 0.0
+trip_v0 1
+trip_alpha 0.15
+sing_qt 0
+sing_DOS_mu 1.5
+sing_DOS_sigma 0.026
+sing_charge 0.0
+sing_v0 1
+sing_alpha 0.15
+kBT 0.026
+E_Field 0.00

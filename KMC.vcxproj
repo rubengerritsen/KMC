@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\Particle.h" />
     <ClInclude Include="include\PBC.h" />
+    <ClInclude Include="include\PType.h" />
     <ClInclude Include="include\RateEngine.h" />
     <ClInclude Include="include\Site.h" />
   </ItemGroup>

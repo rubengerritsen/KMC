@@ -44,7 +44,7 @@ std::uniform_real_distribution<double> uniform(0.0, 1.0);
 double totalTime = 0;
 
 void initializeSites() {
-	std::string filename{ "../input/sites.txt" };
+	std::string filename{ "./input/sites.txt" };
 	std::ifstream myfile(filename);
 	Site *tempSite;
 	Eigen::Vector3d tempCoord;
@@ -145,7 +145,7 @@ void findAndExecuteNextEvent() {
 
 void printSiteOccupation() {
 	std::ofstream outFile;
-	std::string outputFile = "../output/occ.txt";
+	std::string outputFile = "./output/occ.txt";
 	outFile.open(outputFile);
 	if (outFile.is_open()) {
 		for (auto& site : siteList) {
@@ -162,7 +162,7 @@ void printSiteOccupation() {
 
 
 int main() {
-	int maxSteps = 100000000;
+	int maxSteps = 100000;
 	initializeSites();
 	initializeNeighboursAndRates();
 	initializeParticles();
