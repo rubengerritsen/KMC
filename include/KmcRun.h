@@ -16,10 +16,10 @@
 #include "RandomEngine.h"
 #include <fstream>
 
-class SingleRun {
+class KmcRun {
 public:
-    SingleRun(RateEngine rate_engine, PBC pbc, RandomEngine random_engine, int nrOfSteps, std::string siteFile) :
-        rate_engine(rate_engine), pbc(pbc), random_engine(random_engine), nrOfSteps(nrOfSteps){};
+    KmcRun(RateEngine rate_engine, PBC pbc, RandomEngine random_engine, int nrOfSteps, std::string siteFile, double sR_CutOff, double lR_CutOff) :
+        rate_engine(rate_engine), pbc(pbc), random_engine(random_engine), nrOfSteps(nrOfSteps), siteFile(siteFile), sR_cutOff(sR_CutOff), lR_cutOff(lR_CutOff) {};
     void runSimulation();
 
 
@@ -37,8 +37,8 @@ private:
     std::string outputFile = "./output/occ.txt";
 
     /* Some additional model parameters */
-    double lR_cutOff = 25.0;
-    double sR_cutOff = 15.0;
+    double lR_cutOff;
+    double sR_cutOff;
     double totalTime = 0.0;
 
     /* Helper functions */
@@ -47,6 +47,4 @@ private:
     void initializeParticles();
     void findAndExecuteNextEvent();
     void printSiteOccupation();
-
-
 };

@@ -1,2 +1,4 @@
-﻿  main.cpp
+﻿  KmcRun.cpp
+C:\Users\s134864\source\repos\KMC\KMC\src\KmcRun.cpp(104,41): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\s134864\source\repos\KMC\KMC\src\KmcRun.cpp(106,42): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   KMC.vcxproj -> C:\Users\s134864\source\repos\KMC\Debug\KMC.exe

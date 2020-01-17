@@ -1,3 +1,14 @@
+/***************************************************
+ *
+ * KMC MODEL FOR OPTOELECTRIC PROCESSES
+ *
+ * Author: Ruben Gerritsen
+ *
+ * Created on 14-01-2020
+ *
+ * Class to store all data concerning a site.
+ **************************************************/
+
 #pragma once
 #include "Particle.h"
 #include <vector>

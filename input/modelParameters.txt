@@ -1,14 +1,13 @@
 SEED 12345
-nrOfSteps 200000
+nrOfSteps 2000000
 sR_CutOff 20
 lR_CutOff 35
 Xmax 67.821
 Ymax 67.821
 Zmax 67.821
 elec_qt 6
-elec_v0
 elec_DOS_mu 1.5
-elec_DOS_sigma 0.026
+elec_DOS_sigma 0.006
 elec_charge -1.0
 elec_v0 1
 elec_alpha 0.15

@@ -30,18 +30,15 @@
     <ClInclude Include="include\PType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\SingleRun.h">
+    <ClInclude Include="include\RandomEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\RandomEngine.h">
+    <ClInclude Include="include\KmcRun.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Site.cpp">
@@ -50,13 +47,10 @@
     <ClCompile Include="src\RateEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PBC.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SingleRun.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\RandomEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KmcRun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

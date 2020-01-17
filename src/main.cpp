@@ -17,7 +17,7 @@
 #include "RateEngine.h"
 #include "PType.h"
 #include "RandomEngine.h"
-#include "SingleRun.h"
+#include "KmcRun.h"
 
 
 void setupAndExecuteSimulation() {
@@ -36,7 +36,7 @@ void setupAndExecuteSimulation() {
 
     /* Reading all model parameters */
     std::string paramFile = "./input/modelParameters.txt";
-    std::ifstream myfile("./input/sites.txt");
+    std::ifstream myfile(paramFile);
     std::string junk;
     if (myfile.is_open()) {
         myfile >> junk >> SEED;
@@ -69,7 +69,7 @@ void setupAndExecuteSimulation() {
     RandomEngine random_engine(SEED);
 
     /* Execution of the experiment*/
-    SingleRun experiment{rate_engine, pbc, random_engine, nrOfSteps, "./input/sites.txt" };
+    KmcRun experiment{rate_engine, pbc, random_engine, nrOfSteps, "./input/sites.txt", sR_CutOff, lR_CutOff };
     experiment.runSimulation();
 }
 

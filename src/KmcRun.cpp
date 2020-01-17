@@ -1,18 +1,45 @@
-#include "SingleRun.h"
+/***************************************************
+ *
+ * KMC MODEL FOR OPTOELECTRIC PROCESSES
+ *
+ * Author: Ruben Gerritsen
+ *
+ * Created on 14-01-2020
+ *
+ **************************************************/
 
-void SingleRun::runSimulation() {
+#include "KmcRun.h"
+#include <iostream>
+#include <chrono>
+
+void KmcRun::runSimulation() {
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 	initializeSites();
 	initializeNeighboursAndRates();
 	initializeParticles();
-	for (unsigned int i = 0; i < nrOfSteps; ++i) {
+
+	std::cout << "Initialization and setup done." << std::endl;
+
+	for (int step = 0; step < nrOfSteps; ++step) {
 		findAndExecuteNextEvent();
+
+		/* Give some feedback on the progress */
+		if ((step + 1) % (nrOfSteps / 100) == 0) {
+			std::cout << "\rProgress: " << 100.0 * (step + 1) / (nrOfSteps) << "%" << std::flush;
+		}
 	}
+	std::cout << std::endl;
 
 	printSiteOccupation();
+
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	std::cout << "Total simulation time: " << (std::chrono::duration_cast<std::chrono::seconds>(end - begin).count()) << "s" << std::endl;
+
 }
 
-void SingleRun::initializeSites() {
-	std::ifstream myfile("./input/sites.txt");
+void KmcRun::initializeSites() {
+	std::ifstream myfile(siteFile);
 	Site* tempSite;
 	Eigen::Vector3d tempCoord;
 	std::vector<double> tempEnergies(4);
@@ -39,7 +66,7 @@ void SingleRun::initializeSites() {
 	}
 }
 
-void SingleRun::initializeNeighboursAndRates() {
+void KmcRun::initializeNeighboursAndRates() {
 	Eigen::Vector3d dr;
 	double dist = 0;
 
@@ -70,7 +97,7 @@ void SingleRun::initializeNeighboursAndRates() {
 	}
 }
 
-void SingleRun::initializeParticles() {
+void KmcRun::initializeParticles() {
 	Particle* tempParticle;
 	int location = 0;
 	for (int i = 0; i < 1; ++i) {
@@ -84,7 +111,7 @@ void SingleRun::initializeParticles() {
 	}
 }
 
-void SingleRun::findAndExecuteNextEvent() {
+void KmcRun::findAndExecuteNextEvent() {
 	double totalRate = 0;
 	int newLocation;
 	int oldLocation;
@@ -109,7 +136,7 @@ void SingleRun::findAndExecuteNextEvent() {
 	}
 }
 
-void SingleRun::printSiteOccupation() {
+void KmcRun::printSiteOccupation() {
 	std::ofstream outFile;
 	outFile.open(outputFile);
 	if (outFile.is_open()) {
