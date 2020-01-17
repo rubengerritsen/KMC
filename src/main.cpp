@@ -67,6 +67,7 @@ void setupAndExecuteSimulation() {
     PBC pbc(Xmax, Ymax, Zmax);
     RateEngine rate_engine(v0, alpha, charge, E_Field, kBT, pbc);
     RandomEngine random_engine(SEED);
+    random_engine.initializeParameters(DOS_mu, DOS_sigma);
 
     /* Execution of the experiment*/
     KmcRun experiment{rate_engine, pbc, random_engine, nrOfSteps, "./input/sites.txt", sR_CutOff, lR_CutOff };

@@ -7,7 +7,7 @@
  * Created on 14-01-2020
  *
  * This class contains all functions necessary to
- * perform a single monte-carlo simulation
+ * perform a single monte-carlo simulation.
  **************************************************/
 
 #include <string>

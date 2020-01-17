@@ -100,7 +100,7 @@ void KmcRun::initializeNeighboursAndRates() {
 void KmcRun::initializeParticles() {
 	Particle* tempParticle;
 	int location = 0;
-	for (int i = 0; i < 1; ++i) {
+	for (int i = 0; i < 100; ++i) {
 		location = random_engine.getRandomSite();
 		while (siteList[location].isOccupied(PType::elec)) { //Get a unique location
 			location = random_engine.getRandomSite();
@@ -127,6 +127,9 @@ void KmcRun::findAndExecuteNextEvent() {
 		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 		if (totalRate >= select) {
 			newLocation = siteList[part.getLocation()].getNextHop(random_engine.getUniform01(), part.getType());
+			if (siteList[newLocation].isOccupied(part.getType())) {
+				break; // no jump occurs since the site is occupied. 
+			}
 			oldLocation = part.getLocation();
 			part.jumpTo(newLocation, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));
 			siteList[oldLocation].freeSite(part.getType(), totalTime);
@@ -141,7 +144,7 @@ void KmcRun::printSiteOccupation() {
 	outFile.open(outputFile);
 	if (outFile.is_open()) {
 		for (auto& site : siteList) {
-			outFile << site.getEnergy(PType::elec) << " " << site.getOccupation(PType::elec, totalTime) << std::endl;
+			outFile << site.getEnergy(PType::elec) << " " << site.getOccupation(PType::elec, totalTime) / totalTime << std::endl;
 		}
 	}
 	else {

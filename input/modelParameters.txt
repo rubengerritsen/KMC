@@ -7,7 +7,7 @@ Ymax 67.821
 Zmax 67.821
 elec_qt 6
 elec_DOS_mu 1.5
-elec_DOS_sigma 0.006
+elec_DOS_sigma 0.052
 elec_charge -1.0
 elec_v0 1
 elec_alpha 0.15
