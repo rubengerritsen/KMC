@@ -1,8 +1,8 @@
-#pragma once
 #include "Site.h"
 #include <vector>
 #include <iostream>
 #include "Particle.h"
+#include "PType.h"
 
 Site::Site(Eigen::Vector3d coord, std::vector<double> energies) : coord(coord), energies(energies)
 {

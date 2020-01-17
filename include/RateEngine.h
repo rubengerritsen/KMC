@@ -16,6 +16,7 @@
 #include "Site.h"
 #include "Particle.h"
 #include "PBC.h"
+#include "PType.h"
 
 class RateEngine {
 public:

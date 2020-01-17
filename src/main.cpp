@@ -18,13 +18,14 @@
 #include "Site.h"
 #include "PBC.h"
 #include "RateEngine.h"
+#include "PType.h"
 
 
 std::vector<Site> siteList;
 std::vector<Particle> particleList;
 std::mt19937_64 rng(145);
 
-std::array<double, 4> v0 {100000, 1, 1, 1};
+std::array<double, 4> v0 {1, 1, 1, 1};
 std::array<double, 4> alpha { 0.000008, 0.1, 0.1, 0.1 };
 std::array<double, 4> charge{ -1, -1, -1, -1 };
 double E_Field{ 0.0 };
@@ -40,10 +41,10 @@ std::normal_distribution<double> trip_DOS(0, 0.026);
 std::uniform_int_distribution<int> siteDist(0, 511);
 std::uniform_real_distribution<double> uniform(0.0, 1.0);
 
-double time = 0;
+double totalTime = 0;
 
 void initializeSites() {
-	std::string filename{ "./input/sites.txt" };
+	std::string filename{ "../input/sites.txt" };
 	std::ifstream myfile(filename);
 	Site *tempSite;
 	Eigen::Vector3d tempCoord;
@@ -125,7 +126,7 @@ void findAndExecuteNextEvent() {
 		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 	}
 
-	time += -(1.0 / totalRate) * log(uniform(rng));
+	totalTime += -(1.0 / totalRate) * log(uniform(rng));
 
 	double select = totalRate * uniform(rng);
 	totalRate = 0;
@@ -135,8 +136,8 @@ void findAndExecuteNextEvent() {
 			newLocation = siteList[part.getLocation()].getNextHop(uniform(rng), part.getType());
 			oldLocation = part.getLocation();
 			part.jumpTo(newLocation, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));
-			siteList[oldLocation].freeSite(part.getType(), time);
-			siteList[newLocation].setOccupied(part.getType(), time);
+			siteList[oldLocation].freeSite(part.getType(), totalTime);
+			siteList[newLocation].setOccupied(part.getType(), totalTime);
 			break;
 		}
 	}
@@ -144,11 +145,11 @@ void findAndExecuteNextEvent() {
 
 void printSiteOccupation() {
 	std::ofstream outFile;
-	std::string outputFile = "output/occ.txt";
+	std::string outputFile = "../output/occ.txt";
 	outFile.open(outputFile);
 	if (outFile.is_open()) {
 		for (auto& site : siteList) {
-			outFile << site.getEnergy(PType::elec) << " " << site.getOccupation(PType::elec, time) << std::endl;
+			outFile << site.getEnergy(PType::elec) << " " << site.getOccupation(PType::elec, totalTime) << std::endl;
 		}
 	}
 	else {
@@ -161,7 +162,7 @@ void printSiteOccupation() {
 
 
 int main() {
-	int maxSteps = 1000000;
+	int maxSteps = 100000000;
 	initializeSites();
 	initializeNeighboursAndRates();
 	initializeParticles();

@@ -2,8 +2,8 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include "Site.h"
+#include "PType.h"
 
-enum PType {elec=0, hole=1, trip=2, sing=3};
 
 class Particle {
 public:

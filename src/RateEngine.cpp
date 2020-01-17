@@ -14,6 +14,7 @@
 #include <Eigen/Dense>
 #include "RateEngine.h"
 #include "PBC.h"
+#include "PType.h"
 
 double RateEngine::millerAbrahams(const Site& siteOne, const Site& siteTwo, const PType type) const {
     Eigen::Vector3d dr = pbc.dr_PBC_corrected(siteTwo.getCoordinates(), siteOne.getCoordinates());

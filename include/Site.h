@@ -1,12 +1,10 @@
 #pragma once
+#include "Particle.h"
 #include <vector>
 #include <array>
 #include <Eigen/Dense>
-#include "Particle.h"
 #include "PBC.h"
-
-
-enum PType;
+#include "PType.h"
 
 class Site {
 public:
@@ -19,18 +17,18 @@ public:
 	void addSRRate(PType type, double rate) { sRRates[type].push_back(rate); }
 	void addLRRate(double rate) { lRRates.push_back(rate); }
 	bool isOccupied(PType type) const { return occupied[type]; }
-	void setOccupied(PType type, double time) { occupied[type] = true; startOccupation[type] = time; }
-	void freeSite(PType type, double time) { occupied[type] = false; totalOccupation[type] += (time - startOccupation[type]); }
+	void setOccupied(PType type, double totalTime) { occupied[type] = true; startOccupation[type] = totalTime; }
+	void freeSite(PType type, double totalTime) { occupied[type] = false; totalOccupation[type] += (totalTime - startOccupation[type]); }
 	void computeTotals();
 	double getTotalOutRate(PType type) { return totalRates[type]; }
 	int getNextHop(double uniform, PType type);
-	double getOccupation(PType type, double time) { return occupied[type] ? totalOccupation[type] += (time - startOccupation[type]) : totalOccupation[type]; }
+	double getOccupation(PType type, double totalTime) { return occupied[type] ? totalOccupation[type] += (totalTime - startOccupation[type]) : totalOccupation[type]; }
 
 private:
 	std::vector<double> energies;
 	Eigen::Vector3d coord;
 	std::vector<int> sRNeighbours; // sR = short Range
-	std::vector<int> lRNeighbours; // lR = long Range (for Förster transport)
+	std::vector<int> lRNeighbours; // lR = long Range (for Fï¿½rster transport)
 	std::array<std::vector<double>,3> sRRates;
 	std::vector<double> lRRates;
 	std::array<bool, 4> occupied {false};
