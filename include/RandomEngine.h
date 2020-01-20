@@ -24,7 +24,7 @@ public:
     void setNrOfSites(int nr) { siteDist = std::uniform_int_distribution<int>(0,nr-1); }
     double getDOSEnergy(PType type) { return dos[type](rng); }
     double getUniform01() { return uniform01(rng); }
-    double getRandomSite() { return siteDist(rng); }
+    int getRandomSite() { return siteDist(rng); }
     double getInterArrivalTime(double rate) { return -(1.0 / rate) * log(uniform01(rng)); }
 
 private:

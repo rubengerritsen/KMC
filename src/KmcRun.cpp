@@ -11,6 +11,7 @@
 #include "KmcRun.h"
 #include <iostream>
 #include <chrono>
+#include "OutputManager.h"
 
 void KmcRun::runSimulation() {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
@@ -31,7 +32,8 @@ void KmcRun::runSimulation() {
 	}
 	std::cout << std::endl;
 
-	printSiteOccupation();
+	OutputManager out;
+	out.printSiteOccupations(siteList, totalTime);
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	std::cout << "Total simulation time: " << (std::chrono::duration_cast<std::chrono::seconds>(end - begin).count()) << "s" << std::endl;
@@ -139,16 +141,3 @@ void KmcRun::findAndExecuteNextEvent() {
 	}
 }
 
-void KmcRun::printSiteOccupation() {
-	std::ofstream outFile;
-	outFile.open(outputFile);
-	if (outFile.is_open()) {
-		for (auto& site : siteList) {
-			outFile << site.getEnergy(PType::elec) << " " << site.getOccupation(PType::elec, totalTime) / totalTime << std::endl;
-		}
-	}
-	else {
-		std::cout << "Could not open output file: " << outputFile << std::endl;
-	}
-	outFile.close();
-}

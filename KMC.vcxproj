@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\OutputManager.h" />
     <ClInclude Include="include\RandomEngine.h" />
     <ClInclude Include="include\Particle.h" />
     <ClInclude Include="include\PBC.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="include\Site.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\OutputManger.cpp" />
     <ClCompile Include="src\RandomEngine.cpp" />
     <ClCompile Include="src\main.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -110,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\eigen-3.3.7; C:\Users\s134864\source\repos\KMC\KMC\include; C:\Users\s134864\source\repos\KMC\KMC\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\boost_1_72_0;C:\Program Files\eigen-3.3.7;C:\Users\s134864\source\repos\KMC\KMC\include;C:\Users\s134864\source\repos\KMC\KMC\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

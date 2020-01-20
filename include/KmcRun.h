@@ -46,5 +46,4 @@ private:
     void initializeNeighboursAndRates();
     void initializeParticles();
     void findAndExecuteNextEvent();
-    void printSiteOccupation();
 };
