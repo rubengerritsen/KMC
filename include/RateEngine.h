@@ -25,12 +25,15 @@ public:
 
     double millerAbrahams(const Site& siteOne, const Site& siteTwo, const PType type) const;
     double dexter(const Site& siteOne, const Site& siteTwo) const;
+    double decay(const PType type) const;
 
 
 private:
     std::array<double, 4> v0;
     std::array<double, 4> alpha;
     std::array<double, 4> charge;
+    double lifeTime_singlet = 100;
+    double lifeTime_triplet = 100;
     double E_Field;
     double kBT;
     PBC pbc;

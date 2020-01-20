@@ -41,3 +41,12 @@ double RateEngine::dexter(const Site& siteOne, const Site& siteTwo) const {
         return(v0[PType::sing] * exp(-2 * alpha[PType::sing] * dist - deltaE / kBT));
     }
 }
+
+double RateEngine::decay(const PType type) const {
+    switch (type) {
+    case PType::sing:
+        return lifeTime_singlet;
+    case PType::trip:
+        return lifeTime_triplet;
+    }
+}

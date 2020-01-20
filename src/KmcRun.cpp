@@ -114,17 +114,32 @@ void KmcRun::initializeParticles() {
 }
 
 void KmcRun::findAndExecuteNextEvent() {
-	double totalRate = 0;
-	int newLocation;
-	int oldLocation;
-	for (auto& part : particleList) {
-		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
+	double totalHopRate = 0;
+	double totalDecayRate = 0;
+	for (const auto& part : particleList) {
+		/* First we consider all hopping rates */
+		totalHopRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
+
+		/* Next the decay rates (possibilities of sing/trip to decay). */
+		if (part.getType() == PType::sing || part.getType() == PType::trip) {
+			totalDecayRate += rate_engine.decay(part.getType());
+		}
+
+		/* Finally all transition rates from exciton to CT free charges etc. */
+		if (part.getType() == PType::sing) {
+
+		}
+		
 	}
+
+	double totalRate = totalHopRate + totalDecayRate;
 
 	totalTime += random_engine.getInterArrivalTime(totalRate);
 
 	double select = totalRate * random_engine.getUniform01();
 	totalRate = 0;
+	int newLocation;
+	int oldLocation;
 	for (auto& part : particleList) {
 		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
 		if (totalRate >= select) {
