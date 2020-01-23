@@ -50,7 +50,7 @@ void Site::computeTotals() {
 }
 
 /* Takes in a uniform random number [0,1) and returns the site to jump to. */
-int Site::getNextHop(double uniform, PType type) {
+int Site::getNextHop(double uniform, PType type) const {
 	double select = uniform * totalRates[type];
 	double rateSum = 0;
 	if (type == PType::sing) {

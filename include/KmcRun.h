@@ -15,6 +15,7 @@
 #include "PBC.h"
 #include "RandomEngine.h"
 #include <fstream>
+#include "NextEventList.h"
 
 class KmcRun {
 public:
@@ -27,6 +28,7 @@ private:
     RateEngine rate_engine;
     PBC pbc;
     RandomEngine random_engine;
+    NextEventList next_event_list;
 
     /* Storage for the graph and particles */
     std::vector<Site> siteList;
@@ -43,7 +45,8 @@ private:
 
     /* Helper functions */
     void initializeSites();
-    void initializeNeighboursAndRates();
+    void initializeNeighbours();
     void initializeParticles();
-    void findAndExecuteNextEvent();
+    void computeNextEventRates();
+    void executeNextEvent();
 };

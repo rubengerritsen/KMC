@@ -17,7 +17,7 @@ void KmcRun::runSimulation() {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	initializeSites();
-	initializeNeighboursAndRates();
+	initializeNeighbours();
 	initializeParticles();
 
 	std::cout << "Initialization and setup done." << std::endl;
@@ -68,34 +68,22 @@ void KmcRun::initializeSites() {
 	}
 }
 
-void KmcRun::initializeNeighboursAndRates() {
+void KmcRun::initializeNeighbours() {
 	Eigen::Vector3d dr;
 	double dist = 0;
-
 	for (unsigned int i = 0; i < siteList.size(); ++i) {
 		for (unsigned int j = i + 1; j < siteList.size(); ++j) {
 			dr = pbc.dr_PBC_corrected(siteList[i].getCoordinates(), siteList[j].getCoordinates());
 			dist = dr.norm();
 			if (dist <= lR_cutOff) {
 				siteList[i].addLRNeighbour(j);
-				siteList[i].addLRRate(rate_engine.dexter(siteList[i], siteList[j]));
 				siteList[j].addLRNeighbour(i);
-				siteList[j].addLRRate(rate_engine.dexter(siteList[j], siteList[i]));
 				if (dist <= sR_cutOff) {
 					siteList[i].addSRNeighbour(j);
-					siteList[i].addSRRate(PType::elec, rate_engine.millerAbrahams(siteList[i], siteList[j], PType::elec));
-					siteList[i].addSRRate(PType::hole, rate_engine.millerAbrahams(siteList[i], siteList[j], PType::hole));
-					siteList[i].addSRRate(PType::trip, rate_engine.millerAbrahams(siteList[i], siteList[j], PType::trip));
 					siteList[j].addSRNeighbour(i);
-					siteList[j].addSRRate(PType::elec, rate_engine.millerAbrahams(siteList[j], siteList[i], PType::elec));
-					siteList[j].addSRRate(PType::hole, rate_engine.millerAbrahams(siteList[j], siteList[i], PType::hole));
-					siteList[j].addSRRate(PType::trip, rate_engine.millerAbrahams(siteList[j], siteList[i], PType::trip));
 				}
 			}
 		}
-	}
-	for (auto& site : siteList) {
-		site.computeTotals();
 	}
 }
 
@@ -113,31 +101,116 @@ void KmcRun::initializeParticles() {
 	}
 }
 
-void KmcRun::findAndExecuteNextEvent() {
-	double totalHopRate = 0;
-	double totalDecayRate = 0;
-	for (const auto& part : particleList) {
-		/* First we consider all hopping rates */
-		totalHopRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
+void KmcRun::computeNextEventRates() {
 
-		/* Next the decay rates (possibilities of sing/trip to decay). */
-		if (part.getType() == PType::sing || part.getType() == PType::trip) {
-			totalDecayRate += rate_engine.decay(part.getType());
+	next_event_list.clearNextEventList();
+
+	for (unsigned int i = 0; i < particleList.size(); ++i) {
+		Particle& part = particleList[i];
+		switch (part.getType()) {
+		case PType::elec:
+			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
+				if (siteList[nb].isOccupied(PType::elec) || siteList[nb].isOccupied(PType::CT) || siteList[nb].isOccupied(PType::sing) || siteList[nb].isOccupied(PType::trip)) {
+					; // nothing happens
+				}
+				else if (siteList[nb].isOccupied(PType::hole)) { //exciton generation
+					next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::excitonGeneration, i, nb);
+				}
+				else { // normal hop
+					next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::normalhop, i, nb);
+				}
+			}
+			break;
+		case PType::hole:
+			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
+				if (siteList[nb].isOccupied(PType::hole) || siteList[nb].isOccupied(PType::CT) || siteList[nb].isOccupied(PType::sing) || siteList[nb].isOccupied(PType::trip)) {
+					; // nothing happens
+				}
+				else if (siteList[nb].isOccupied(PType::elec)) { // exciton generation
+					next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::excitonGeneration, i, nb);
+				}
+				else { // normal hop
+					next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::normalhop, i, nb);
+				}
+			}
+			break;
+		case PType::sing:
+			// it can hop, ...
+			for (const auto& nb : siteList[part.getLocation()].getLRNeighbours()) { //Note: long range neighbourlist here
+				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+
+					next_event_list.pushNextEvent(rate_engine.forster(siteList[part.getLocation()], siteList[nb]), Transition::normalhop ,i, nb); // normal "forster" hop
+				}
+			}
+			// ... it can decay ...
+			next_event_list.pushNextEvent(rate_engine.decay(part.getType()), Transition::decay, i, i);
+			// ... or it will dissociate into a CT state.
+			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
+				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+
+					next_event_list.pushNextEvent(rate_engine.millerAbrahamsDIS(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::dissociateElec, i, nb);
+					next_event_list.pushNextEvent(rate_engine.millerAbrahamsDIS(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::dissociateHole, i, nb);
+				}
+			}
+			break;
+		case PType::trip:
+			// it can hop, ...
+			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
+				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+
+					next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb]), Transition::normalhop, i, nb); // normal "forster" hop
+				}
+			}
+			// ... it can decay ...
+			next_event_list.pushNextEvent(rate_engine.decay(part.getType()), Transition::decay, i, i);
+			// ... or it will dissociate into a CT state.
+			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
+				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+
+					next_event_list.pushNextEvent(rate_engine.millerAbrahamsDIS(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::dissociateElec, i, nb);
+					next_event_list.pushNextEvent(rate_engine.millerAbrahamsDIS(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::dissociateHole, i, nb);
+				}
+			}
+			break;
+		case PType::CT:
+			// it can recombine into an exciton (either the hole follows the electron or vice versa) or ...
+			next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocationCTelec()], siteList[part.getLocation()], PType::elec ), Transition::excitonGeneration,i, part.getLocation());
+			next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[part.getLocationCTelec()], PType::elec), Transition::excitonGeneration, i, part.getLocationCTelec());
+			// ... it can separate into free charges
+			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
+				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+
+					next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT_DIS(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::dissociateHole, i, nb);
+				}
+			}
+			for (const auto& nb : siteList[part.getLocationCTelec()].getSRNeighbours()) {
+				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+
+					next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT_DIS(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::dissociateElec, i, nb);
+				}
+			}
+			break;
 		}
-
-		/* Finally all transition rates from exciton to CT free charges etc. */
-		if (part.getType() == PType::sing) {
-
-		}
-		
 	}
+}
 
-	double totalRate = totalHopRate + totalDecayRate;
 
-	totalTime += random_engine.getInterArrivalTime(totalRate);
 
-	double select = totalRate * random_engine.getUniform01();
-	totalRate = 0;
+/* UNDER CONSTRUCTION */
+void KmcRun::executeNextEvent() {
+	
+	totalTime += random_engine.getInterArrivalTime(next_event_list.getTotalRate());
+
+	std::tuple<Transition, int, int> nextEvent = next_event_list.getNextEvent();
+
+
+
 	int newLocation;
 	int oldLocation;
 	for (auto& part : particleList) {
@@ -145,7 +218,7 @@ void KmcRun::findAndExecuteNextEvent() {
 		if (totalRate >= select) {
 			newLocation = siteList[part.getLocation()].getNextHop(random_engine.getUniform01(), part.getType());
 			if (siteList[newLocation].isOccupied(part.getType())) {
-				break; // no jump occurs since the site is occupied. 
+				break; // no jump occurs since the site is occupied. Note that the time did advance
 			}
 			oldLocation = part.getLocation();
 			part.jumpTo(newLocation, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));

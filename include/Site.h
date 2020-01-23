@@ -32,8 +32,10 @@ public:
 	void freeSite(PType type, double totalTime) { occupied[type] = false; totalOccupation[type] += (totalTime - startOccupation[type]); }
 	void computeTotals();
 	double getTotalOutRate(PType type) { return totalRates[type]; }
-	int getNextHop(double uniform, PType type);
+	int getNextHop(double uniform, PType type) const;
 	double getOccupation(PType type, double totalTime) { return occupied[type] ? totalOccupation[type] += (totalTime - startOccupation[type]) : totalOccupation[type]; }
+	const std::vector<int>& getSRNeighbours() const { return sRNeighbours; }
+	const std::vector<int>& getLRNeighbours() const { return lRNeighbours; }
 
 private:
 	std::vector<double> energies;

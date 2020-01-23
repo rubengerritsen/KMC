@@ -12,6 +12,8 @@
 #ifndef PARTICLETYPE
 #define PARTICLETYPE
 
-enum PType {elec=0, hole=1, trip=2, sing=3};
+enum PType { elec = 0, hole = 1, trip = 2, sing = 3, CT = 4 };
+
+enum Transition {normalhop=0, dissociateElec = 1, dissociateHole = 2, excitonGeneration = 3, decay = 4};
 
 #endif
