@@ -23,7 +23,8 @@ void KmcRun::runSimulation() {
 	std::cout << "Initialization and setup done." << std::endl;
 
 	for (int step = 0; step < nrOfSteps; ++step) {
-		findAndExecuteNextEvent();
+		computeNextEventRates();
+		executeNextEvent();
 
 		/* Give some feedback on the progress */
 		if ((step + 1) % (nrOfSteps / 100) == 0) {
@@ -161,7 +162,7 @@ void KmcRun::computeNextEventRates() {
 				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
 					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
 
-					next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb]), Transition::normalhop, i, nb); // normal "forster" hop
+					next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb]), Transition::normalhop, i, nb); // normal hop
 				}
 			}
 			// ... it can decay ...
@@ -207,25 +208,38 @@ void KmcRun::executeNextEvent() {
 	
 	totalTime += random_engine.getInterArrivalTime(next_event_list.getTotalRate());
 
-	std::tuple<Transition, int, int> nextEvent = next_event_list.getNextEvent();
+	std::tuple<Transition, int, int> nextEvent = next_event_list.getNextEvent(random_engine.getUniform01());
+	
+	int partID = std::get<1>(nextEvent);
+	Particle& part = particleList[partID];
+	auto it = particleList.begin() + partID; // get an iterator at the position of the particle in particleList; used below (move and pop_back)
+	
+	int newLocation = std::get<2>(nextEvent);
+	int oldLocation = part.getLocation();
 
+	switch (std::get<0>(nextEvent)) {
+	case Transition::normalhop:
+		part.jumpTo(newLocation, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));
+		siteList[oldLocation].freeSite(part.getType(), totalTime);
+		siteList[newLocation].setOccupied(part.getType(), totalTime);
+		break;
+	case Transition::decay:
+		siteList[oldLocation].freeSite(part.getType(), totalTime);
+		*it = std::move(particleList.back()); // A trick to do an efficient delete in a vector (move and pop_back)
+		particleList.pop_back();
+		break;
+	case Transition::excitonGeneration:
+		if (part.getType() == PType::elec) {
 
-
-	int newLocation;
-	int oldLocation;
-	for (auto& part : particleList) {
-		totalRate += siteList[part.getLocation()].getTotalOutRate(PType::elec);
-		if (totalRate >= select) {
-			newLocation = siteList[part.getLocation()].getNextHop(random_engine.getUniform01(), part.getType());
-			if (siteList[newLocation].isOccupied(part.getType())) {
-				break; // no jump occurs since the site is occupied. Note that the time did advance
-			}
-			oldLocation = part.getLocation();
-			part.jumpTo(newLocation, pbc.dr_PBC_corrected(siteList[oldLocation].getCoordinates(), siteList[newLocation].getCoordinates()));
-			siteList[oldLocation].freeSite(part.getType(), totalTime);
-			siteList[newLocation].setOccupied(part.getType(), totalTime);
-			break;
 		}
+		else { // it's a hole
+
+		}
+		break;
+
 	}
+
+
+			
 }
 
