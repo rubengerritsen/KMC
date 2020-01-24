@@ -12,6 +12,6 @@ public:
 
 
 private:
-	std::string outputPath = "./output/";
+	std::string outputPath = "C:/Users/s134864/source/repos/KMC/KMC/output/";
 
 };

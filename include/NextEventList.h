@@ -16,29 +16,29 @@
 class NextEventList {
 public:
 
-    NextEventList() {
-        rateList.reserve(5000);
-        partList.reserve(5000);
-        newLocation.reserve(5000);
-        eventType.reserve(5000);
+    NextEventList(int maxSize) : maxSize(maxSize) {
+        rateList.resize(maxSize);
+        partList.resize(maxSize);
+        newLocation.resize(maxSize);
+        eventType.resize(maxSize);
     }
 
-    void pushNextEvent(double rate, Transition eventtype, int part, int loc) { 
-        rateList.push_back(rate); eventType.push_back(eventtype); partList.push_back(part); newLocation.push_back(loc); totalRate += rate;
-    }
-    
-    void clearNextEventList() { rateList.clear(); eventType.clear(); partList.clear(); newLocation.clear(); totalRate = 0.0; }
-
+    void pushNextEvent(double rate, Transition eventtype, int part, int loc);
+    void resetNextEventList() { cPos = 0; totalRate = 0.0; }
     double getTotalRate() const { return totalRate; }
+    int getNrOfEvents() const { return cPos; }
     
     std::tuple<Transition, int, int> getNextEvent(double random01) const;
 
     int size() { return rateList.size(); }
 
 private:
+    int maxSize;
+    int cPos = 0;
     std::vector<double> rateList;
     std::vector<int> partList;
     std::vector<int> newLocation;
     std::vector<Transition> eventType;
     double totalRate = 0.0;
+    void resizeVectors();
 };

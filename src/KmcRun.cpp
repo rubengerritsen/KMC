@@ -61,6 +61,7 @@ void KmcRun::initializeSites() {
 		}
 		myfile.close();
 		random_engine.setNrOfSites(siteList.size());
+		std::cout << "Number of sites in the simulation: " << siteList.size() << "\n";
 	}
 	else {
 		std::cout << "Unable to open file: " << siteFile << std::endl;
@@ -104,7 +105,7 @@ void KmcRun::initializeParticles() {
 
 void KmcRun::computeNextEventRates() {
 
-	next_event_list.clearNextEventList();
+	next_event_list.resetNextEventList();
 
 	for (unsigned int i = 0; i < particleList.size(); ++i) {
 		Particle& part = particleList[i];
@@ -199,7 +200,6 @@ void KmcRun::computeNextEventRates() {
 			break;
 		}
 	}
-	std::cout << "Next Event List Size: " << next_event_list.size() << "\n";
 }
 
 void KmcRun::executeNextEvent() {
