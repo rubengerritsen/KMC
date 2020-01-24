@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\NextEventList.h" />
     <ClInclude Include="include\OutputManager.h" />
     <ClInclude Include="include\RandomEngine.h" />
     <ClInclude Include="include\Particle.h" />
@@ -30,7 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\NextEventList.cpp" />
-    <ClCompile Include="src\OutputManger.cpp" />
+    <ClCompile Include="src\OutputManager.cpp" />
     <ClCompile Include="src\RandomEngine.cpp" />
     <ClCompile Include="src\main.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -111,7 +112,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\boost_1_72_0;C:\Program Files\eigen-3.3.7;C:\Users\s134864\source\repos\KMC\KMC\include;C:\Users\s134864\source\repos\KMC\KMC\src</AdditionalIncludeDirectories>
     </ClCompile>
@@ -142,8 +143,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\boost_1_72_0;C:\Program Files\eigen-3.3.7;C:\Users\s134864\source\repos\KMC\KMC\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
