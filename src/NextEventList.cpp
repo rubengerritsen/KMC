@@ -10,16 +10,18 @@
  **************************************************/
 
 #include "NextEventList.h"
+#include <iostream>
 
-
-std::tuple<int, int> NextEventList::getNextEvent(double random01) const {
+std::tuple<Transition, int, int> NextEventList::getNextEvent(double random01) const {
 	double cumSum = 0;
 	double select = totalRate * random01;
 
-	for (unsigned int i = 0; i < rateList; ++i) {
+	for (unsigned int i = 0; i < rateList.size(); ++i) {
 		cumSum += rateList[i];
 		if (cumSum >= select) {
-			return std::tuple<Transition, int, int>{eventType[i], partList[i], newLocation[i]}
+            return std::tuple<Transition, int, int> {eventType[i], partList[i], newLocation[i]};
 		}
 	}
+    std::cout << "Next event could not be found\n";
+    exit(EXIT_FAILURE);
 }

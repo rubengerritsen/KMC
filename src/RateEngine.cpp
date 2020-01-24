@@ -16,6 +16,11 @@
 #include "PBC.h"
 #include "PType.h"
 
+
+double RateEngine::millerAbrahams(const Site& siteOne, const Site& siteTwo, const PType type) const {
+    return 1.0;
+}
+/*
 double RateEngine::millerAbrahams(const Site& siteOne, const Site& siteTwo, const PType type) const {
     Eigen::Vector3d dr = pbc.dr_PBC_corrected(siteTwo.getCoordinates(), siteOne.getCoordinates());
     double dist = dr.norm();
@@ -27,7 +32,7 @@ double RateEngine::millerAbrahams(const Site& siteOne, const Site& siteTwo, cons
     else {
         return(v0[type] * std::exp(-2 * alpha[type] * dist - deltaE / kBT));
     }
-}
+} */
 
 double RateEngine::millerAbrahamsGEN(const Site& siteOne, const Site& siteTwo, const PType type) const {
     Eigen::Vector3d dr = pbc.dr_PBC_corrected(siteTwo.getCoordinates(), siteOne.getCoordinates());

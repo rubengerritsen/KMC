@@ -40,7 +40,6 @@ private:
     double deltaE_SingtoCT = 0.2;
     double deltaE_binding = 1.0;
     double deltaE_CTbinding = 0.48;
-    double R_forster = 1;
     double E_Field;
     double kBT;
     double R_forster = 0.3;

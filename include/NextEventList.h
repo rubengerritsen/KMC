@@ -10,6 +10,7 @@
  **************************************************/
 
 #include <vector>
+#include <tuple>
 #include "PType.h"
 
 class NextEventList {

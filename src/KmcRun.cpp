@@ -11,7 +11,7 @@
 #include "KmcRun.h"
 #include <iostream>
 #include <chrono>
-#include "OutputManager.h"
+#include <tuple>
 
 void KmcRun::runSimulation() {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
@@ -285,8 +285,8 @@ void KmcRun::executeNextEvent() {
 
 	case Transition::CTdisViaElec:
 		/* free old sites */
-		siteList[part.getLocationCTelec].freeSite(PType::CT, totalTime); 
-		siteList[part.getLocation].freeSite(PType::CT, totalTime);
+		siteList[part.getLocationCTelec()].freeSite(PType::CT, totalTime); 
+		siteList[part.getLocation()].freeSite(PType::CT, totalTime);
 
 		/* create the elec and hole */
 		part.makeElectron(newLocation);
@@ -300,8 +300,8 @@ void KmcRun::executeNextEvent() {
 
 	case Transition::CTdisViaHole:
 		/* free old sites */
-		siteList[part.getLocationCTelec].freeSite(PType::CT, totalTime);
-		siteList[part.getLocation].freeSite(PType::CT, totalTime);
+		siteList[part.getLocationCTelec()].freeSite(PType::CT, totalTime);
+		siteList[part.getLocation()].freeSite(PType::CT, totalTime);
 
 		/* create the elec and hole */
 		part.makeHole(newLocation);

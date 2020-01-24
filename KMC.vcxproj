@@ -29,6 +29,7 @@
     <ClInclude Include="include\Site.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\NextEventList.cpp" />
     <ClCompile Include="src\OutputManger.cpp" />
     <ClCompile Include="src\RandomEngine.cpp" />
     <ClCompile Include="src\main.cpp">

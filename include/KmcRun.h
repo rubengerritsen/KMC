@@ -14,8 +14,9 @@
 #include "RateEngine.h"
 #include "PBC.h"
 #include "RandomEngine.h"
-#include <fstream>
 #include "NextEventList.h"
+#include "PType.h"
+#include "OutputManager.h"
 
 class KmcRun {
 public:

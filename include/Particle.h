@@ -34,7 +34,7 @@ public:
 
 private:
 	int location;
-	int locationCTelec;
+	int locationCTelec = 0;
 	PType type;
 	int energyLevel;
 	Eigen::Vector3d dr_travelled;

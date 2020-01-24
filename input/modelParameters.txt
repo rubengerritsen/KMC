@@ -1,5 +1,5 @@
 SEED 12345
-nrOfSteps 200000
+nrOfSteps 2000
 sR_CutOff 20
 lR_CutOff 35
 Xmax 67.821
