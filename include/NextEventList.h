@@ -15,6 +15,14 @@
 
 class NextEventList {
 public:
+
+    NextEventList() {
+        rateList.reserve(5000);
+        partList.reserve(5000);
+        newLocation.reserve(5000);
+        eventType.reserve(5000);
+    }
+
     void pushNextEvent(double rate, Transition eventtype, int part, int loc) { 
         rateList.push_back(rate); eventType.push_back(eventtype); partList.push_back(part); newLocation.push_back(loc); totalRate += rate;
     }
@@ -24,6 +32,8 @@ public:
     double getTotalRate() const { return totalRate; }
     
     std::tuple<Transition, int, int> getNextEvent(double random01) const;
+
+    int size() { return rateList.size(); }
 
 private:
     std::vector<double> rateList;

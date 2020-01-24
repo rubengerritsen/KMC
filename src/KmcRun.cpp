@@ -199,6 +199,7 @@ void KmcRun::computeNextEventRates() {
 			break;
 		}
 	}
+	std::cout << "Next Event List Size: " << next_event_list.size() << "\n";
 }
 
 void KmcRun::executeNextEvent() {
