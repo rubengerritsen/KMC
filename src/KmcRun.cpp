@@ -92,7 +92,7 @@ void KmcRun::initializeNeighbours() {
 void KmcRun::initializeParticles() {
 	Particle* tempParticle;
 	int location = 0;
-	for (int partID = 0; partID < 100; ++partID) {
+	for (int partID = 0; partID < 1000; ++partID) {
 		location = random_engine.getRandomSite();
 		while (siteList[location].isOccupied(PType::elec)) { //Get a unique location
 			location = random_engine.getRandomSite();
