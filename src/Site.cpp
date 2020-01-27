@@ -25,3 +25,12 @@ std::ostream& operator<<(std::ostream& os, const Site& st) {
 	os << st.getCoordinates();
 	return os;
 }
+
+int Site::isOccupiedBy(PType type) const { 
+	if (occupied[type]){
+		return occupiedBy[type];
+		}else { 
+			std::cout << "This site is no longer occupied!" << std::endl;
+			return occupiedBy[type];
+		}
+}

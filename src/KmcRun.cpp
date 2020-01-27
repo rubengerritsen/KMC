@@ -6,6 +6,9 @@
  *
  * Created on 14-01-2020
  *
+ * There is still a larger ERROR in the code
+ * Particle ID's get mixed up and tangled due to
+ * the deletion of elements from the particle list
  **************************************************/
 
 #include "KmcRun.h"
@@ -298,24 +301,28 @@ void KmcRun::executeNextEvent() {
 		break;
 
 	case Transition::singToCTViaElec:
+	std::cout << "\n sing to CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the electron
 		siteList[oldLocation].setOccupied(PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(oldLocation, newLocation);
 		break;
 
 	case Transition::singToCTViaHole:
+	std::cout << "\n sing to CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the hole
 		siteList[oldLocation].setOccupied(PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(newLocation, oldLocation);
 		break;
 
 	case Transition::tripToCTViaElec:
+	std::cout << "\n trip to CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the electron
 		siteList[oldLocation].setOccupied(PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(oldLocation, newLocation);
 		break;
 
 	case Transition::tripToCTViaHole:
+	std::cout << "\n trip to CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the hole
 		siteList[oldLocation].setOccupied(PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(newLocation, oldLocation);
@@ -348,7 +355,7 @@ void KmcRun::executeNextEvent() {
 
 		/* Set sites occupied */
 		siteList[newLocation].setOccupied(PType::hole, partID, totalTime);
-		siteList[oldLocation].setOccupied(PType::elec, particleList.size() - 1, totalTime);
+		siteList[oldLocation].setOccupied(PType::elec, particleList.size() - 1, totalTime); //wrong: must be old location of elec this refers to the old hole location
 		break;
 	}		
 }
