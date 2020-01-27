@@ -35,6 +35,7 @@ void KmcRun::runSimulation() {
 
 	OutputManager out;
 	out.printSiteOccupations(siteList, totalTime);
+	out.printParticleInfo(particleList);
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	std::cout << "Total simulation time: " << (std::chrono::duration_cast<std::chrono::seconds>(end - begin).count()) << "s" << std::endl;

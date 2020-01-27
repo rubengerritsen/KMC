@@ -27,3 +27,15 @@ void OutputManager::printSiteOccupations(std::vector<Site>& siteList, double tot
 	}
 	outFile.close();
 }
+
+void OutputManager::printParticleInfo(std::vector<Particle>& particleList){
+	std::array<int,5> nrPerType {0};
+	for (auto& part : particleList){
+		nrPerType[part.getType()] += 1;
+	}
+	for (auto& elem : nrPerType){
+		std::cout << elem << "  " ;
+	}
+	std::cout << std::endl;
+
+}
