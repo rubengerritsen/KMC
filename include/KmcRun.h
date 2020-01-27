@@ -44,7 +44,6 @@ private:
 
     int nrOfSteps;
     std::string siteFile;
-    std::string outputFile = "./output/occ.txt";
 
     /* Some additional model parameters */
     double lR_cutOff;

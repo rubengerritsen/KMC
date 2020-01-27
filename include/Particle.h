@@ -25,6 +25,7 @@ public:
 	void makeCTState(int holeLocation, int elecLocation) { type = PType::CT; locationCTelec = elecLocation; location = holeLocation; }
 	void makeElectron(int loc) { type = PType::elec; location = loc; }
 	void makeHole(int loc) { type = PType::hole; location = loc; }
+
 	double distanceTravelled() const { return dr_travelled.norm(); }
 	int getLocation() const { return location; }
 	int getLocationCTelec() const { return locationCTelec; }

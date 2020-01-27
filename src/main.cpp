@@ -62,6 +62,7 @@ void setupAndExecuteSimulation() {
         std::cout << "Terminating execution." << std::endl;
         exit(EXIT_FAILURE);
     }
+    myfile.close();
 
     /* Setting up helper objects for the simulation */
     PBC pbc(Xmax, Ymax, Zmax);
