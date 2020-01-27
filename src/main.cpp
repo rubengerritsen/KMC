@@ -35,7 +35,7 @@ void setupAndExecuteSimulation() {
 
 
     /* Reading all model parameters */
-    std::string paramFile = "./input/modelParameters.txt";
+    std::string paramFile = "C:/Users/s134864/source/repos/KMC/KMC/input/modelParameters.txt";
     std::ifstream myfile(paramFile);
     std::string junk;
     if (myfile.is_open()) {
@@ -70,7 +70,7 @@ void setupAndExecuteSimulation() {
     random_engine.initializeParameters(DOS_mu, DOS_sigma);
 
     /* Execution of the experiment*/
-    KmcRun experiment{rate_engine, pbc, random_engine, nrOfSteps, "./input/sites.txt", sR_CutOff, lR_CutOff };
+    KmcRun experiment{rate_engine, pbc, random_engine, nrOfSteps, "C:/Users/s134864/source/repos/KMC/KMC/input/sites.txt", sR_CutOff, lR_CutOff };
     experiment.runSimulation();
 }
 

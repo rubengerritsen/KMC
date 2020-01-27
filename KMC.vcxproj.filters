@@ -39,6 +39,9 @@
     <ClInclude Include="include\OutputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\NextEventList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -56,7 +59,10 @@
     <ClCompile Include="src\KmcRun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\OutputManger.cpp">
+    <ClCompile Include="src\NextEventList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OutputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

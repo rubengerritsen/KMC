@@ -9,12 +9,14 @@
  * This class contains all functions necessary to
  * perform a single monte-carlo simulation.
  **************************************************/
-
+#pragma once
 #include <string>
 #include "RateEngine.h"
 #include "PBC.h"
 #include "RandomEngine.h"
-#include <fstream>
+#include "NextEventList.h"
+#include "PType.h"
+#include "OutputManager.h"
 
 class KmcRun {
 public:
@@ -27,6 +29,7 @@ private:
     RateEngine rate_engine;
     PBC pbc;
     RandomEngine random_engine;
+    NextEventList next_event_list{ 5000 };
 
     /* Storage for the graph and particles */
     std::vector<Site> siteList;
@@ -43,7 +46,8 @@ private:
 
     /* Helper functions */
     void initializeSites();
-    void initializeNeighboursAndRates();
+    void initializeNeighbours();
     void initializeParticles();
-    void findAndExecuteNextEvent();
+    void computeNextEventRates();
+    void executeNextEvent();
 };

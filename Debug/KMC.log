@@ -1,2 +1,9 @@
-﻿  OutputManger.cpp
+﻿  NextEventList.cpp
+  OutputManager.cpp
+  RandomEngine.cpp
+  main.cpp
+  RateEngine.cpp
+  KmcRun.cpp
+  Site.cpp
+  Generating Code...
   KMC.vcxproj -> C:\Users\s134864\source\repos\KMC\Debug\KMC.exe
