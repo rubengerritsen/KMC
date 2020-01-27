@@ -92,7 +92,9 @@ void KmcRun::initializeNeighbours() {
 void KmcRun::initializeParticles() {
 	Particle* tempParticle;
 	int location = 0;
-	for (int partID = 0; partID < 1000; ++partID) {
+	int partID = 0;
+	/* electrons */
+	for (int i = 0; i < nrOfParticlesPerType[PType::elec]; ++i) {
 		location = random_engine.getRandomSite();
 		while (siteList[location].isOccupied(PType::elec)) { //Get a unique location
 			location = random_engine.getRandomSite();
@@ -100,6 +102,40 @@ void KmcRun::initializeParticles() {
 		tempParticle = new Particle(location, PType::elec);
 		particleList.push_back(*tempParticle);
 		siteList[location].setOccupied(PType::elec, partID, 0.0);
+		partID++;
+	}
+	/* holes */
+	for (int i = 0; i < nrOfParticlesPerType[PType::hole]; ++i) {
+		location = random_engine.getRandomSite();
+		while (siteList[location].isOccupied(PType::elec) || siteList[location].isOccupied(PType::hole)) { //Get a unique location
+			location = random_engine.getRandomSite();
+		}
+		tempParticle = new Particle(location, PType::hole);
+		particleList.push_back(*tempParticle);
+		siteList[location].setOccupied(PType::hole, partID, 0.0);
+		partID++;
+	}
+	/* triplets */
+	for (int i = 0; i < nrOfParticlesPerType[PType::trip]; ++i) {
+		location = random_engine.getRandomSite();
+		while (siteList[location].isOccupied(PType::elec) || siteList[location].isOccupied(PType::hole) || siteList[location].isOccupied(PType::trip)) { //Get a unique location
+			location = random_engine.getRandomSite();
+		}
+		tempParticle = new Particle(location, PType::trip);
+		particleList.push_back(*tempParticle);
+		siteList[location].setOccupied(PType::trip, partID, 0.0);
+		partID++;
+	}
+	/* singlets */
+	for (int i = 0; i < nrOfParticlesPerType[PType::sing]; ++i) {
+		location = random_engine.getRandomSite();
+		while (siteList[location].isOccupied(PType::elec) || siteList[location].isOccupied(PType::hole) || siteList[location].isOccupied(PType::trip) || siteList[location].isOccupied(PType::sing)) { //Get a unique location
+			location = random_engine.getRandomSite();
+		}
+		tempParticle = new Particle(location, PType::sing);
+		particleList.push_back(*tempParticle);
+		siteList[location].setOccupied(PType::sing, partID, 0.0);
+		partID++;
 	}
 }
 

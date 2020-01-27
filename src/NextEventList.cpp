@@ -40,7 +40,7 @@ void NextEventList::pushNextEvent(double rate, Transition eventtype, int part, i
 }
 
 void NextEventList::resizeVectors() {
-    maxSize += 1000;
+    maxSize = (int) std::floor(maxSize * 1.1);
     std::cout << "Initial event list size was to small...\n" << "... vectors are resized to: " << maxSize << " elements.\n";
     rateList.resize(maxSize);
     partList.resize(maxSize);

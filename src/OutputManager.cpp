@@ -9,7 +9,7 @@ void OutputManager::printSiteOccupations(std::vector<Site>& siteList, double tot
 	time_t now = time(0);
 	ltm = localtime( &now);
 	ltm->tm_mon = ltm->tm_mon + 1;
-	std::string filename = outputPath + str( boost::format("siteOcc_%02d%2d%2d.txt") % ltm->tm_mon % ltm->tm_mday % ltm->tm_hour ) ;
+	std::string filename = outputPath + str( boost::format("siteOcc_%02d%02d%02d%02d.txt") % ltm->tm_mon % ltm->tm_mday % ltm->tm_hour % ltm->tm_min) ;
 
 	std::ofstream outFile;
 	outFile.open(filename);
@@ -23,7 +23,7 @@ void OutputManager::printSiteOccupations(std::vector<Site>& siteList, double tot
 		std::cout << "Site occupations were printed to:\n\t"<<  filename << "\n";
 	}
 	else {
-		std::cout << "Could not open output file: " << filename << "\n";
+		std::cout << "Could not open output file: " << filename << std::endl;
 	}
 	outFile.close();
 }

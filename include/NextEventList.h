@@ -11,16 +11,17 @@
 
 #include <vector>
 #include <tuple>
+#include <cmath>
 #include "PType.h"
 
 class NextEventList {
 public:
-
-    NextEventList(int maxSize) : maxSize(maxSize) {
-        rateList.resize(maxSize);
-        partList.resize(maxSize);
-        newLocation.resize(maxSize);
-        eventType.resize(maxSize);
+    void initializeListSize(int size){
+        maxSize = size;
+        rateList.resize(size);
+        partList.resize(size);
+        newLocation.resize(size);
+        eventType.resize(size);
     }
 
     void pushNextEvent(double rate, Transition eventtype, int part, int loc);
@@ -33,7 +34,7 @@ public:
     int size() { return rateList.size(); }
 
 private:
-    int maxSize;
+    int maxSize = 10;
     int cPos = 0;
     std::vector<double> rateList;
     std::vector<int> partList;

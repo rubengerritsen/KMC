@@ -70,7 +70,7 @@ void setupAndExecuteSimulation() {
     random_engine.initializeParameters(DOS_mu, DOS_sigma);
 
     /* Execution of the experiment*/
-    KmcRun experiment{rate_engine, pbc, random_engine, nrOfSteps, "C:/Users/s134864/source/repos/KMC/KMC/input/sites.txt", sR_CutOff, lR_CutOff };
+    KmcRun experiment{rate_engine, pbc, random_engine, nrOfSteps, qt, "C:/Users/s134864/source/repos/KMC/KMC/input/sites.txt", sR_CutOff, lR_CutOff };
     experiment.runSimulation();
 }
 
