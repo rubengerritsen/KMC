@@ -24,7 +24,7 @@ class KmcRun {
 public:
     KmcRun(RateEngine rate_engine, PBC pbc, RandomEngine random_engine, int nrOfSteps, std::array<int,4> qt, std::string siteFile, double sR_CutOff, double lR_CutOff) :
         rate_engine(rate_engine), pbc(pbc), random_engine(random_engine), nrOfSteps(nrOfSteps), nrOfParticlesPerType(qt) ,siteFile(siteFile), sR_cutOff(sR_CutOff), lR_cutOff(lR_CutOff) {
-            int totalNrOfParticles;
+            int totalNrOfParticles = 0;
             totalNrOfParticles = std::accumulate(nrOfParticlesPerType.begin(), nrOfParticlesPerType.end(), totalNrOfParticles);
             next_event_list.initializeListSize(totalNrOfParticles * 100); // create space for at least a 100 events per particles
             std::cout << "Initial number of particles in the simulation: " << totalNrOfParticles << "\n";
