@@ -6,4 +6,4 @@ This will be a kinetic Monte Carlo simulator for optoelectronic processes in dis
 
 ### Dependencies
 
-The current implementation uses some functionality from the Eigen library, see: <http://eigen.tuxfamily.org/>.
+The current implementation uses some functionality from the Eigen and Boost libraries, see <http://eigen.tuxfamily.org/> and <https://www.boost.org/>.
