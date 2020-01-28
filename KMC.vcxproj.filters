@@ -27,7 +27,7 @@
     <ClInclude Include="include\PBC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\PType.h">
+    <ClInclude Include="include\EnumNames.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\RandomEngine.h">

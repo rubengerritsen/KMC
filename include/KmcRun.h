@@ -17,7 +17,7 @@
 #include "PBC.h"
 #include "RandomEngine.h"
 #include "NextEventList.h"
-#include "PType.h"
+#include "EnumNames.h"
 #include "OutputManager.h"
 
 class KmcRun {

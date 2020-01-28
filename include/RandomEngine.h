@@ -15,7 +15,7 @@
 #pragma once
 #include <random> 
 #include <array>
-#include "PType.h"
+#include "EnumNames.h"
 
 class RandomEngine {
 public:

@@ -6,11 +6,12 @@
  *
  * Created on 14-01-2020
  *
+ * This file contains the global enum definitions.
  * 
  **************************************************/
 
-#ifndef PARTICLETYPE
-#define PARTICLETYPE
+#ifndef ENUMNAMES
+#define ENUMNAMES
 
 enum PType { elec = 0, hole = 1, trip = 2, sing = 3, CT = 4 };
 

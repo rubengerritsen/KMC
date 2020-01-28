@@ -7,12 +7,13 @@
  * Created on 14-01-2020
  *
  * Class to store all data concerning next events
+ * Also computes the next event.
  **************************************************/
 
 #include <vector>
 #include <tuple>
 #include <cmath>
-#include "PType.h"
+#include "EnumNames.h"
 
 class NextEventList {
 public:

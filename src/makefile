@@ -12,7 +12,7 @@ ODIR=obj
 LIBS=-lm 
 
 # All user defined headers 
-_DEPS = Particle.h PBC.h RateEngine.h Site.h KmcRun.h NextEventList.h OutputManager.h PType.h RandomEngine.h Site.h
+_DEPS = Particle.h PBC.h RateEngine.h Site.h KmcRun.h NextEventList.h OutputManager.h EnumNames.h RandomEngine.h Site.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # All objects that need to be created (for every .c-file we include a .o-file here)

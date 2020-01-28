@@ -14,7 +14,7 @@
 #include <Eigen/Dense>
 #include "RateEngine.h"
 #include "PBC.h"
-#include "PType.h"
+#include "EnumNames.h"
 
 
 double RateEngine::millerAbrahams(const Site& siteOne, const Site& siteTwo, const PType type) const {

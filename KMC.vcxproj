@@ -24,7 +24,7 @@
     <ClInclude Include="include\RandomEngine.h" />
     <ClInclude Include="include\Particle.h" />
     <ClInclude Include="include\PBC.h" />
-    <ClInclude Include="include\PType.h" />
+    <ClInclude Include="include\EnumNames.h" />
     <ClInclude Include="include\RateEngine.h" />
     <ClInclude Include="include\KmcRun.h" />
     <ClInclude Include="include\Site.h" />

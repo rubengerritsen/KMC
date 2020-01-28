@@ -256,10 +256,6 @@ void KmcRun::executeNextEvent() {
 	int newLocation = std::get<2>(nextEvent);
 	int oldLocation = part.getLocation();
 
-	static int excitonElec = 0;
-	static int excitonHole = 0;
-	static int decays = 0;
-
 	PType type;
 	Particle* tempParticle;
 
@@ -271,15 +267,11 @@ void KmcRun::executeNextEvent() {
 		break;
 
 	case Transition::decay:
-	std::cout << "\n decay \n";
-	decays += 1;
 		siteList[oldLocation].freeSite(part.getType(), totalTime);
 		part.killParticle(totalTime);
 		break;
 
 	case Transition::excitonFromElec:
-	std::cout << "\n exciton from elec \n";
-	excitonElec +=1;
 		siteList[oldLocation].freeSite(PType::elec, totalTime);
 		type = particleList[siteList[newLocation].isOccupiedBy(PType::hole)].makeExciton(random_engine.getUniform01());
 		siteList[newLocation].changeOccupied(PType::hole, type, partID, totalTime);
@@ -287,15 +279,12 @@ void KmcRun::executeNextEvent() {
 		break;
 
 	case Transition::excitonFromElecCT:
-	std::cout << "\n exciton from elec CT \n";
 		siteList[part.getLocationCTelec()].freeSite(PType::CT, totalTime); // free the site of the electron
 		type = part.makeExciton(random_engine.getUniform01()); // create an exciton in the place of the hole
 		siteList[part.getLocation()].changeOccupied(PType::CT, type, partID, totalTime);
 		break;
 
 	case Transition::excitonFromHole:
-	excitonHole +=1;
-	std::cout << "\n exciton from hole \n";
 		siteList[oldLocation].freeSite(PType::hole, totalTime);
 		type = particleList[siteList[newLocation].isOccupiedBy(PType::elec)].makeExciton(random_engine.getUniform01());
 		siteList[newLocation].changeOccupied(PType::elec, type, partID, totalTime);
@@ -303,7 +292,6 @@ void KmcRun::executeNextEvent() {
 		break;
 
 	case Transition::excitonFromHoleCT:
-		std::cout << "\n exciton from hole CT \n";
 		siteList[part.getLocation()].freeSite(PType::CT, totalTime); // free the site of the hole
 		type = part.makeExciton(random_engine.getUniform01()); // create an exciton in the place of the elec
 		siteList[part.getLocationCTelec()].changeOccupied(PType::CT, type, partID, totalTime);
@@ -311,28 +299,24 @@ void KmcRun::executeNextEvent() {
 		break;
 
 	case Transition::singToCTViaElec:
-	std::cout << "\n CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the electron
 		siteList[oldLocation].changeOccupied(PType::sing, PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(oldLocation, newLocation);
 		break;
 
 	case Transition::singToCTViaHole:
-	std::cout << "\n CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the hole
 		siteList[oldLocation].changeOccupied(PType::sing, PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(newLocation, oldLocation);
 		break;
 
 	case Transition::tripToCTViaElec:
-	std::cout << "\n CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the electron
 		siteList[oldLocation].changeOccupied(PType::trip, PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(oldLocation, newLocation);
 		break;
 
 	case Transition::tripToCTViaHole:
-	std::cout << "\n CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the hole
 		siteList[oldLocation].changeOccupied(PType::trip, PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(newLocation, oldLocation);
@@ -369,7 +353,6 @@ void KmcRun::executeNextEvent() {
 		siteList[newLocation].setOccupied(PType::hole, partID, totalTime);
 		siteList[oldElecLocation].setOccupied(PType::elec, particleList.size() - 1, totalTime); 
 		break;
-	}
-	//std::cout << "\nelec excitons: " << excitonElec << " hole excitons: " << excitonHole << " decays: " << decays <<std::endl;		
+	}		
 }
 

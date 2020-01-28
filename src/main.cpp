@@ -15,7 +15,7 @@
 #include "Site.h"
 #include "PBC.h"
 #include "RateEngine.h"
-#include "PType.h"
+#include "EnumNames.h"
 #include "RandomEngine.h"
 #include "KmcRun.h"
 

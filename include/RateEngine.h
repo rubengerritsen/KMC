@@ -16,7 +16,7 @@
 #include "Site.h"
 #include "Particle.h"
 #include "PBC.h"
-#include "PType.h"
+#include "EnumNames.h"
 
 class RateEngine {
 public:

@@ -1,6 +1,6 @@
 #include "OutputManager.h"
 #include <ctime>
-#include "PType.h"
+#include "EnumNames.h"
 
 
 void OutputManager::printSiteOccupations(std::vector<Site>& siteList, double totalTime) {
@@ -29,9 +29,20 @@ void OutputManager::printSiteOccupations(std::vector<Site>& siteList, double tot
 }
 
 void OutputManager::printParticleInfo(std::vector<Particle>& particleList){
+	std::cout << "Alive particles: " << std::endl;
 	std::array<int,5> nrPerType {0};
 	for (auto& part : particleList){
 		if(part.isAlive()) nrPerType[part.getType()] += 1;
+	}
+	for (auto& elem : nrPerType){
+		std::cout << elem << "  " ;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Dead particles: " << std::endl;
+	nrPerType = {0, 0, 0, 0, 0};
+	for (auto& part : particleList){
+		if(!part.isAlive()) nrPerType[part.getType()] += 1;
 	}
 	for (auto& elem : nrPerType){
 		std::cout << elem << "  " ;
