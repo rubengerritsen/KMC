@@ -31,7 +31,7 @@ void OutputManager::printSiteOccupations(std::vector<Site>& siteList, double tot
 void OutputManager::printParticleInfo(std::vector<Particle>& particleList){
 	std::array<int,5> nrPerType {0};
 	for (auto& part : particleList){
-		nrPerType[part.getType()] += 1;
+		if(part.isAlive()) nrPerType[part.getType()] += 1;
 	}
 	for (auto& elem : nrPerType){
 		std::cout << elem << "  " ;

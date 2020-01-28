@@ -149,95 +149,97 @@ void KmcRun::computeNextEventRates() {
 
 	for (unsigned int i = 0; i < particleList.size(); ++i) {
 		Particle& part = particleList[i];
-		switch (part.getType()) {
-		case PType::elec:
-			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
-				if (siteList[nb].isOccupied(PType::elec) || siteList[nb].isOccupied(PType::CT) || siteList[nb].isOccupied(PType::sing) || siteList[nb].isOccupied(PType::trip)) {
-					; // nothing happens
+		if (part.isAlive()) {
+			switch (part.getType()) {
+			case PType::elec:
+				for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
+					if (siteList[nb].isOccupied(PType::elec) || siteList[nb].isOccupied(PType::CT) || siteList[nb].isOccupied(PType::sing) || siteList[nb].isOccupied(PType::trip)) {
+						; // nothing happens
+					}
+					else if (siteList[nb].isOccupied(PType::hole)) { //exciton generation
+						next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::excitonFromElec, i, nb);
+					}
+					else { // normal hop
+						next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::normalhop, i, nb);
+					}
 				}
-				else if (siteList[nb].isOccupied(PType::hole)) { //exciton generation
-					next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::excitonFromElec, i, nb);
+				break;
+			case PType::hole:
+				for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
+					if (siteList[nb].isOccupied(PType::hole) || siteList[nb].isOccupied(PType::CT) || siteList[nb].isOccupied(PType::sing) || siteList[nb].isOccupied(PType::trip)) {
+						; // nothing happens
+					}
+					else if (siteList[nb].isOccupied(PType::elec)) { // exciton generation
+						next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::excitonFromHole, i, nb);
+					}
+					else { // normal hop
+						next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::normalhop, i, nb);
+					}
 				}
-				else { // normal hop
-					next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::normalhop, i, nb);
-				}
-			}
-			break;
-		case PType::hole:
-			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
-				if (siteList[nb].isOccupied(PType::hole) || siteList[nb].isOccupied(PType::CT) || siteList[nb].isOccupied(PType::sing) || siteList[nb].isOccupied(PType::trip)) {
-					; // nothing happens
-				}
-				else if (siteList[nb].isOccupied(PType::elec)) { // exciton generation
-					next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::excitonFromHole, i, nb);
-				}
-				else { // normal hop
-					next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::normalhop, i, nb);
-				}
-			}
-			break;
-		case PType::sing:
-			// it can hop, ...
-			for (const auto& nb : siteList[part.getLocation()].getLRNeighbours()) { //Note: long range neighbourlist here
-				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
-					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+				break;
+			case PType::sing:
+				// it can hop, ...
+				for (const auto& nb : siteList[part.getLocation()].getLRNeighbours()) { //Note: long range neighbourlist here
+					if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+						!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
 
-					next_event_list.pushNextEvent(rate_engine.forster(siteList[part.getLocation()], siteList[nb]), Transition::normalhop ,i, nb); // normal "forster" hop
+						next_event_list.pushNextEvent(rate_engine.forster(siteList[part.getLocation()], siteList[nb]), Transition::normalhop, i, nb); // normal "forster" hop
+					}
 				}
-			}
-			// ... it can decay ...
-			next_event_list.pushNextEvent(rate_engine.decay(part.getType()), Transition::decay, i, i);
-			// ... or it will dissociate into a CT state.
-			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
-				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
-					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+				// ... it can decay ...
+				next_event_list.pushNextEvent(rate_engine.decay(part.getType()), Transition::decay, i, i);
+				// ... or it will dissociate into a CT state.
+				for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
+					if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+						!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
 
-					next_event_list.pushNextEvent(rate_engine.millerAbrahamsDIS(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::singToCTViaElec, i, nb);
-					next_event_list.pushNextEvent(rate_engine.millerAbrahamsDIS(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::singToCTViaHole, i, nb);
+						next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::singToCTViaElec, i, nb);
+						next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::singToCTViaHole, i, nb);
+					}
 				}
-			}
-			break;
-		case PType::trip:
-			// it can hop, ...
-			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
-				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
-					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+				break;
+			case PType::trip:
+				// it can hop, ...
+				for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
+					if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+						!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
 
-					next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::normalhop, i, nb); // normal hop
+						next_event_list.pushNextEvent(rate_engine.millerAbrahams(siteList[part.getLocation()], siteList[nb], part.getType()), Transition::normalhop, i, nb); // normal hop
+					}
 				}
-			}
-			// ... it can decay ...
-			next_event_list.pushNextEvent(rate_engine.decay(part.getType()), Transition::decay, i, i);
-			// ... or it will dissociate into a CT state.
-			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
-				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
-					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+				// ... it can decay ...
+				next_event_list.pushNextEvent(rate_engine.decay(part.getType()), Transition::decay, i, i);
+				// ... or it will dissociate into a CT state.
+				for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) { //Note: short range neighbourlist here
+					if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+						!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
 
-					next_event_list.pushNextEvent(rate_engine.millerAbrahamsDIS(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::tripToCTViaElec, i, nb);
-					next_event_list.pushNextEvent(rate_engine.millerAbrahamsDIS(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::tripToCTViaHole, i, nb);
+						next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::tripToCTViaElec, i, nb);
+						next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::tripToCTViaHole, i, nb);
+					}
 				}
-			}
-			break;
-		case PType::CT:
-			// it can recombine into an exciton (either the hole follows the electron or vice versa) or ...
-			next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocationCTelec()], siteList[part.getLocation()], PType::elec ), Transition::excitonFromElecCT,i, part.getLocation());
-			next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[part.getLocationCTelec()], PType::hole), Transition::excitonFromHoleCT, i, part.getLocationCTelec());
-			// ... it can separate into free charges
-			for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
-				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
-					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+				break;
+			case PType::CT:
+				// it can recombine into an exciton (either the hole follows the electron or vice versa) or ...
+				next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocationCTelec()], siteList[part.getLocation()], PType::elec), Transition::excitonFromElecCT, i, part.getLocation());
+				next_event_list.pushNextEvent(rate_engine.millerAbrahamsGEN(siteList[part.getLocation()], siteList[part.getLocationCTelec()], PType::hole), Transition::excitonFromHoleCT, i, part.getLocationCTelec());
+				// ... it can separate into free charges
+				for (const auto& nb : siteList[part.getLocation()].getSRNeighbours()) {
+					if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+						!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
 
-					next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT_DIS(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::CTdisViaHole, i, nb);
+						next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT_DIS(siteList[part.getLocation()], siteList[nb], PType::hole), Transition::CTdisViaHole, i, nb);
+					}
 				}
-			}
-			for (const auto& nb : siteList[part.getLocationCTelec()].getSRNeighbours()) {
-				if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
-					!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
+				for (const auto& nb : siteList[part.getLocationCTelec()].getSRNeighbours()) {
+					if (!siteList[nb].isOccupied(PType::elec) && !siteList[nb].isOccupied(PType::hole) &&
+						!siteList[nb].isOccupied(PType::CT) && !siteList[nb].isOccupied(PType::sing) && !siteList[nb].isOccupied(PType::trip)) {
 
-					next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT_DIS(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::CTdisViaElec, i, nb);
+						next_event_list.pushNextEvent(rate_engine.millerAbrahamsCT_DIS(siteList[part.getLocation()], siteList[nb], PType::elec), Transition::CTdisViaElec, i, nb);
+					}
 				}
+				break;
 			}
-			break;
 		}
 	}
 }
@@ -250,10 +252,13 @@ void KmcRun::executeNextEvent() {
 	
 	int partID = std::get<1>(nextEvent);
 	Particle& part = particleList[partID];
-	auto it = particleList.begin() + partID; // get an iterator at the position of the particle in particleList; used below (move and pop_back)
-	
+		
 	int newLocation = std::get<2>(nextEvent);
 	int oldLocation = part.getLocation();
+
+	static int excitonElec = 0;
+	static int excitonHole = 0;
+	static int decays = 0;
 
 	PType type;
 	Particle* tempParticle;
@@ -266,65 +271,70 @@ void KmcRun::executeNextEvent() {
 		break;
 
 	case Transition::decay:
+	std::cout << "\n decay \n";
+	decays += 1;
 		siteList[oldLocation].freeSite(part.getType(), totalTime);
-		*it = std::move(particleList.back()); // A trick to do an efficient delete in a vector (move and pop_back)
-		particleList.pop_back();
+		part.killParticle(totalTime);
 		break;
 
 	case Transition::excitonFromElec:
+	std::cout << "\n exciton from elec \n";
+	excitonElec +=1;
 		siteList[oldLocation].freeSite(PType::elec, totalTime);
 		type = particleList[siteList[newLocation].isOccupiedBy(PType::hole)].makeExciton(random_engine.getUniform01());
-		siteList[newLocation].setOccupied(type, partID, totalTime);
-		*it = std::move(particleList.back()); // A trick to do an efficient delete in a vector (move and pop_back)
-		particleList.pop_back();
+		siteList[newLocation].changeOccupied(PType::hole, type, partID, totalTime);
+		part.killParticle(totalTime);
 		break;
 
 	case Transition::excitonFromElecCT:
+	std::cout << "\n exciton from elec CT \n";
 		siteList[part.getLocationCTelec()].freeSite(PType::CT, totalTime); // free the site of the electron
 		type = part.makeExciton(random_engine.getUniform01()); // create an exciton in the place of the hole
-		siteList[part.getLocation()].setOccupied(type, partID, totalTime);
+		siteList[part.getLocation()].changeOccupied(PType::CT, type, partID, totalTime);
 		break;
 
 	case Transition::excitonFromHole:
+	excitonHole +=1;
+	std::cout << "\n exciton from hole \n";
 		siteList[oldLocation].freeSite(PType::hole, totalTime);
 		type = particleList[siteList[newLocation].isOccupiedBy(PType::elec)].makeExciton(random_engine.getUniform01());
-		siteList[newLocation].setOccupied(type, partID, totalTime);
-		*it = std::move(particleList.back()); // A trick to do an efficient delete in a vector (move and pop_back)
-		particleList.pop_back();
+		siteList[newLocation].changeOccupied(PType::elec, type, partID, totalTime);
+		part.killParticle(totalTime);
 		break;
 
 	case Transition::excitonFromHoleCT:
+		std::cout << "\n exciton from hole CT \n";
 		siteList[part.getLocation()].freeSite(PType::CT, totalTime); // free the site of the hole
 		type = part.makeExciton(random_engine.getUniform01()); // create an exciton in the place of the elec
-		siteList[part.getLocationCTelec()].setOccupied(type, partID, totalTime);
+		siteList[part.getLocationCTelec()].changeOccupied(PType::CT, type, partID, totalTime);
 		part.setLocation(part.getLocationCTelec());
 		break;
 
 	case Transition::singToCTViaElec:
-	std::cout << "\n sing to CT \n";
+	std::cout << "\n CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the electron
-		siteList[oldLocation].setOccupied(PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
+		siteList[oldLocation].changeOccupied(PType::sing, PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(oldLocation, newLocation);
 		break;
 
 	case Transition::singToCTViaHole:
-	std::cout << "\n sing to CT \n";
+	std::cout << "\n CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the hole
-		siteList[oldLocation].setOccupied(PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
+		siteList[oldLocation].changeOccupied(PType::sing, PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(newLocation, oldLocation);
 		break;
 
 	case Transition::tripToCTViaElec:
-	std::cout << "\n trip to CT \n";
+	std::cout << "\n CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the electron
-		siteList[oldLocation].setOccupied(PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
+		siteList[oldLocation].changeOccupied(PType::trip, PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(oldLocation, newLocation);
 		break;
 
 	case Transition::tripToCTViaHole:
-	std::cout << "\n trip to CT \n";
+	std::cout << "\n CT \n";
 		siteList[newLocation].setOccupied(PType::CT, partID, totalTime); //note that new here represents the new position of the hole
-		siteList[oldLocation].setOccupied(PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
+		siteList[oldLocation].changeOccupied(PType::trip, PType::CT, partID, totalTime); //note that old here represents the original position of the sing 
 		part.makeCTState(newLocation, oldLocation);
 		break;
 
@@ -344,19 +354,22 @@ void KmcRun::executeNextEvent() {
 		break;
 
 	case Transition::CTdisViaHole:
+		int oldElecLocation = part.getLocationCTelec();
+
 		/* free old sites */
 		siteList[part.getLocationCTelec()].freeSite(PType::CT, totalTime);
 		siteList[part.getLocation()].freeSite(PType::CT, totalTime);
 
 		/* create the elec and hole */
 		part.makeHole(newLocation);
-		tempParticle = new Particle(oldLocation, PType::elec);
+		tempParticle = new Particle(oldElecLocation, PType::elec);
 		particleList.push_back(*tempParticle);
 
 		/* Set sites occupied */
 		siteList[newLocation].setOccupied(PType::hole, partID, totalTime);
-		siteList[oldLocation].setOccupied(PType::elec, particleList.size() - 1, totalTime); //wrong: must be old location of elec this refers to the old hole location
+		siteList[oldElecLocation].setOccupied(PType::elec, particleList.size() - 1, totalTime); 
 		break;
-	}		
+	}
+	//std::cout << "\nelec excitons: " << excitonElec << " hole excitons: " << excitonHole << " decays: " << decays <<std::endl;		
 }
 

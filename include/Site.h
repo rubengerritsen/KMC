@@ -29,6 +29,7 @@ public:
 	bool isOccupied(PType type) const { return occupied[type]; }
 	int isOccupiedBy(PType type) const;
 	void setOccupied(PType type, int partID, double totalTime) { occupied[type] = true; startOccupation[type] = totalTime; occupiedBy[type] = partID; }
+	void changeOccupied(PType oldType, PType newType, int partID, double totalTime) { occupied[oldType] = false; occupied[newType] = true; startOccupation[newType] = totalTime; occupiedBy[newType] = partID; }
 	void freeSite(PType type, double totalTime) { if(occupied[type]){ occupied[type] = false;} else{std::cout << "Attempt to free a non occupied site." << std::endl;} totalOccupation[type] += (totalTime - startOccupation[type]); }
 	double getOccupation(PType type, double totalTime) { return occupied[type] ? totalOccupation[type] += (totalTime - startOccupation[type]) : totalOccupation[type]; }
 	const std::vector<int>& getSRNeighbours() const { return sRNeighbours; }

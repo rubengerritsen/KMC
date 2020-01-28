@@ -37,7 +37,7 @@ private:
     std::array<double, 4> charge;
     double lifeTime_singlet = 1e-4;
     double lifeTime_triplet = 1e-4;
-    double deltaE_SingtoCT = 0.2;
+    double deltaE_SingtoCT = 0.48;
     double deltaE_binding = 1.0;
     double deltaE_CTbinding = 0.48;
     double E_Field;
