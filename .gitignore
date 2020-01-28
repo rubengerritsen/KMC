@@ -1,1 +1,7 @@
 output/
+Debug/
+Release/
+KMC.vcxproj
+KMC.vcxproj.filters
+KMC.vcxproj.user
+.vscode/
