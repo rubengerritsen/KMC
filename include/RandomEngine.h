@@ -29,7 +29,7 @@ public:
 
 private:
     std::mt19937_64 rng;
-    std::array<std::normal_distribution<double>, 4> dos{std::normal_distribution<double>(0.0,1)};
+    std::array<std::normal_distribution<double>, 4> dos;
     std::uniform_real_distribution<double> uniform01 { 0.0, 1.0 };
     std::uniform_int_distribution<int> siteDist{ 0, 10 };
 };

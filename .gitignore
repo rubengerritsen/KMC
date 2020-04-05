@@ -5,5 +5,5 @@ KMC.vcxproj
 KMC.vcxproj.filters
 KMC.vcxproj.user
 .vscode/
-kmc.exe
 .vs/
+build/

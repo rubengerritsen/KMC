@@ -6,9 +6,6 @@
  *
  * Created on 14-01-2020
  *
- * There is still a larger ERROR in the code
- * Particle ID's get mixed up and tangled due to
- * the deletion of elements from the particle list
  **************************************************/
 
 #include "KmcRun.h"
