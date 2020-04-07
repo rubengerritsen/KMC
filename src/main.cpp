@@ -88,33 +88,26 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
 
   topol.readReorganisationEnergies(options.get<std::string>("pathToLambdas"));
 
-  // Load Neighbourlist
+  // Load Neighbourlist and precompute hopping rates
   std::cout << "Loading neighbours from file this may take a while ...\n";
   Neighbourlist nbList(topol.getNrOfSites());
-  nbList.readShortRangeNeighboursFromFile(
-      options.get<std::string>("pathToShortNB"));
-  nbList.readLongRangeNeighboursFromFile(
-      options.get<std::string>("pathToLongNB"));
+  nbList.setupShortRangeNeighbours(options.get<std::string>("pathToShortNB"),
+                                   topol);
+  nbList.setupLongRangeNeighbours(options.get<std::string>("pathToLongNB"),
+                                  topol);
   std::cout << "Loaded neighbours from: "
             << options.get<std::string>("pathToShortNB") << " and "
             << options.get<std::string>("pathToLongNB") << std::endl;
-  // Pre-compute hopping rates
-  //nbList.preComputeRates();
 
-  // Setup shared neighbourlist
+  // Redesign KMC run to account for precomputed hopping
 
   // Run different instances of the same simulation
 
   // Combine and merge results
 
-  // Setting up helper objects for the simulation
   PBC pbc(options.get<double>("Xmax"), options.get<double>("Ymax"),
           options.get<double>("Zmax"));
 
-  std::cout << options.get<int>("nrOfElectrons") << std::endl;
-  std::cout << options.get<double>("nrOfHoles") << std::endl;
-
-  /* And finally setup and run the simulation */
 }
 
 int main(int ac, char *av[]) {

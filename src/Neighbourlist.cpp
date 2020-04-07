@@ -1,9 +1,11 @@
 #include "Neighbourlist.h"
 #include "EnumNames.h"
+#include <boost/math/constants/constants.hpp>
 #include <fstream>
 #include <iostream>
 
-void Neighbourlist::readShortRangeNeighboursFromFile(std::string filename) {
+void Neighbourlist::setupShortRangeNeighbours(std::string filename,
+                                              const Topology &topol) {
   std::ifstream file(filename);
   if (file.is_open()) {
     int id1, id2;
@@ -29,7 +31,8 @@ void Neighbourlist::readShortRangeNeighboursFromFile(std::string filename) {
   }
 }
 
-void Neighbourlist::readLongRangeNeighboursFromFile(std::string filename) {
+void Neighbourlist::setupLongRangeNeighbours(std::string filename,
+                                             const Topology &topol) {
   std::ifstream file(filename);
   if (file.is_open()) {
     int id1, id2;
@@ -63,4 +66,11 @@ void Neighbourlist::printNeighboursOf(int site) {
     std::cout << nb << " ";
   }
   std::cout << std::endl;
+}
+
+double Neighbourlist::marcusRate(double jeff2, double lambda_ij, double kBT,
+                                 double Energy1, double Energy2) {
+  // note time unit of hbar: ps => hbar = 6.582119514e-4
+  return 2 * boost::math::constants::pi<double>() / (6.582119514e-4) * jeff2 /
+         std::sqrt(4 * boost::math::constants::pi<double>() * lambda_ij * kBT) * std::exp(- (Energy2 - Energy1 - lambda_ij) * (Energy2 - Energy1 - lambda_ij)  / (4*lambda_ij *kBT));
 }
