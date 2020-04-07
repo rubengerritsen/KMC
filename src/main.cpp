@@ -1,5 +1,5 @@
 /***************************************************
- * 
+ *
  * KMC MODEL FOR OPTOELECTRIC PROCESSES
  *
  * Author: Ruben Gerritsen
@@ -7,79 +7,119 @@
  * Created on 14-01-2020
  *
  **************************************************/
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <array>
-#include "Particle.h"
-#include "Site.h"
-#include "PBC.h"
-#include "RateEngine.h"
 #include "EnumNames.h"
-#include "RandomEngine.h"
 #include "KmcRun.h"
+#include "Neighbourlist.h"
+#include "PBC.h"
+#include "Particle.h"
+#include "RandomEngine.h"
+#include "RateEngine.h"
+#include "Site.h"
+#include "Topology.h"
+#include <array>
+#include <boost/program_options.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <fstream>
+#include <iostream>
+#include <string>
 
+void setupAndExecuteSimulation(int ac, char *av[]) {
 
-void setupAndExecuteSimulation() {
-    int SEED{0},nrOfSteps{ 0 };
-    double Xmax{0}, Ymax{ 0 }, Zmax{ 0 };
-    double sR_CutOff{ 0 }, lR_CutOff{ 0 };
-    std::array<int, 4> qt;
-    std::array<double, 4> v0;
-    std::array<double, 4> alpha;
-    std::array<double, 4> charge;
-    std::array<double, 4> DOS_mu;
-    std::array<double, 4> DOS_sigma;
-    double kBT{ 0 };
-    double E_Field{ 0 };
+  /*********************************************/
+  /* First we parse the command line arguments */
+  /*********************************************/
+  std::string optionFile;
+  try {
+    boost::program_options::options_description desc("Possible options");
+    desc.add_options()("help,h", "produce help message")(
+        "optionfile,o", boost::program_options::value<std::string>(),
+        "path to option file (required)")("threads,t",
+                                          boost::program_options::value<int>(),
+                                          "number of threads to use");
 
+    boost::program_options::variables_map vm;
+    boost::program_options::store(
+        boost::program_options::parse_command_line(ac, av, desc), vm);
+    boost::program_options::notify(vm);
 
-    /* Reading all model parameters */
-    std::string paramFile = "./input/modelParameters.txt";
-    std::ifstream myfile(paramFile);
-    std::string junk;
-    if (myfile.is_open()) {
-        myfile >> junk >> SEED;
-        myfile >> junk >> nrOfSteps;
-        myfile >> junk >> sR_CutOff;
-        myfile >> junk >> lR_CutOff;
-        myfile >> junk >> Xmax;
-        myfile >> junk >> Ymax;
-        myfile >> junk >> Zmax;
-        for (unsigned int i = 0; i < 4; ++i) {
-            myfile >> junk >> qt[i];
-            myfile >> junk >> DOS_mu[i];
-            myfile >> junk >> DOS_sigma[i];
-            myfile >> junk >> charge[i];
-            myfile >> junk >> v0[i];
-            myfile >> junk >> alpha[i];
-        }
-        myfile >> junk >> kBT;
-        myfile >> junk >> E_Field;
+    if (vm.count("help") || ac == 1) {
+      std::cout << "General usage: " << av[0]
+                << " -o <path/to/optionfile.xml>\n";
+      std::cout << desc << "\n";
+      return;
     }
-    else {
-        std::cout << "Unable to open file: " << paramFile << std::endl;
-        std::cout << "Terminating execution." << std::endl;
-        exit(EXIT_FAILURE);
+
+    if (vm.count("optionfile")) {
+      optionFile = vm["optionfile"].as<std::string>();
+      std::cout << "Using optionfile: " << optionFile << ".\n";
+    } else {
+      std::cout << "No option file specified, terminating program\n";
+      exit(EXIT_FAILURE);
     }
-    myfile.close();
 
-    /* Setting up helper objects for the simulation */
-    PBC pbc(Xmax, Ymax, Zmax);
-    RateEngine rate_engine(v0, alpha, charge, E_Field, kBT, pbc);
-    RandomEngine random_engine(SEED);
-    random_engine.initializeParameters(DOS_mu, DOS_sigma);
+    if (vm.count("threads")) {
+      std::cout << "Using " << vm["threads"].as<int>() << " threads.\n";
+    } else {
+      std::cout << "Default number of threads (1) will be used.\n";
+    }
+  } catch (std::exception &e) {
+    std::cerr << "error: " << e.what() << "\n";
+    exit(EXIT_FAILURE);
+  } catch (...) {
+    std::cerr << "Exception of unknown type!\n";
+    exit(EXIT_FAILURE);
+  }
 
-    /* Execution of the experiment*/
-    KmcRun experiment{rate_engine, pbc, random_engine, nrOfSteps, qt, "./input/sites.txt", sR_CutOff, lR_CutOff };
-    experiment.runSimulation();
+  /*****************************************************************/
+  /* Next we read the simulation options and setup the simulation. */
+  /*****************************************************************/
+
+  // Parse option file
+  boost::property_tree::ptree pt, options;
+  read_xml(optionFile, pt);
+  options = pt.get_child("options");
+
+  // Load Topology
+  Topology topol;
+  topol.readTopologyFromFile(options.get<std::string>("pathToSites"));
+  std::cout << "Loaded " << topol.getNrOfSites() << " sites from "
+            << options.get<std::string>("pathToSites") << std::endl;
+
+  topol.readReorganisationEnergies(options.get<std::string>("pathToLambdas"));
+
+  // Load Neighbourlist
+  std::cout << "Loading neighbours from file this may take a while ...\n";
+  Neighbourlist nbList(topol.getNrOfSites());
+  nbList.readShortRangeNeighboursFromFile(
+      options.get<std::string>("pathToShortNB"));
+  nbList.readLongRangeNeighboursFromFile(
+      options.get<std::string>("pathToLongNB"));
+  std::cout << "Loaded neighbours from: "
+            << options.get<std::string>("pathToShortNB") << " and "
+            << options.get<std::string>("pathToLongNB") << std::endl;
+  // Pre-compute hopping rates
+  //nbList.preComputeRates();
+
+  // Setup shared neighbourlist
+
+  // Run different instances of the same simulation
+
+  // Combine and merge results
+
+  // Setting up helper objects for the simulation
+  PBC pbc(options.get<double>("Xmax"), options.get<double>("Ymax"),
+          options.get<double>("Zmax"));
+
+  std::cout << options.get<int>("nrOfElectrons") << std::endl;
+  std::cout << options.get<double>("nrOfHoles") << std::endl;
+
+  /* And finally setup and run the simulation */
 }
 
-int main() {
-	
-    setupAndExecuteSimulation();
+int main(int ac, char *av[]) {
 
-    return 0;
+  setupAndExecuteSimulation(ac, av);
+
+  return 0;
 }
-
-

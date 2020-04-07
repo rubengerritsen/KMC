@@ -1,0 +1,17 @@
+<options>
+    <SEED>12345</SEED>
+    <maxTime>10</maxTime>
+    <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
+    <Xmax>10</Xmax>
+    <Ymax>10</Ymax>
+    <Zmax>10</Zmax>
+    <kBT help="in eV">0.026</kBT>
+    <electricField>0.0</electricField>
+    <nrOfElectrons>10</nrOfElectrons>
+    <nrOfHoles>4</nrOfHoles>
+    <nrOfSinglets>12</nrOfSinglets>
+    <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies.txt</pathToSites>
+    <pathToShortNB help="path to file with short range neighbours">../input/shortNB.txt</pathToShortNB>
+    <pathToLongNB help="path to file with long range neighbours">../input/longNB.txt</pathToLongNB>
+    <pathToLambdas>../input/reorganisation.xml</pathToLambdas>
+</options>
