@@ -62,7 +62,7 @@ void Topology::readReorganisationEnergies(std::string filename){
   lambdaNtoX[molType][PType::sing] = lambdas.get<double>(moleculeName + ".n2s");
 }
 
-void Topology::printHead(int nrOfItems) {
+void Topology::printHead(int nrOfItems) const {
   for (int i = 0; i < nrOfItems; i++) {
     std::cout << siteLocations[i][0] << " " << siteLocations[i][1] << " "
               << siteLocations[i][2] << " " << siteEnergies[i][0] << " "

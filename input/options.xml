@@ -6,7 +6,7 @@
     <Ymax>10</Ymax>
     <Zmax>10</Zmax>
     <kBT help="in eV">0.026</kBT>
-    <electricField>0.0</electricField>
+    <electricField_x>0.0</electricField_x>
     <nrOfElectrons>10</nrOfElectrons>
     <nrOfHoles>4</nrOfHoles>
     <nrOfSinglets>12</nrOfSinglets>

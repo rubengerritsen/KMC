@@ -7,13 +7,23 @@
 
 class Topology {
 public:
-  Topology() {}
+  Topology(double kBT, double EField_x) : kBT(kBT), EField_x(EField_x) {}
   void readTopologyFromFile(std::string filename);
   void readReorganisationEnergies(std::string filename);
   /* prints first few items of topology class */
-  void printHead(int nrOfItems = 10);
+  void printHead(int nrOfItems = 10) const;
   void printReorganisationEnergies();
-  int getNrOfSites() { return moleculeType.size(); }
+  int getNrOfSites() const { return moleculeType.size(); }
+
+  double getKBT() const {return kBT;}
+  double getEField() const {return EField_x;}
+  double getLambda(int id1, int id2, PType type) const {return lambdaXtoN[moleculeType[id1]][type] + lambdaNtoX[moleculeType[id2]][type];} 
+  double getDeltaEnergy(int id1, int id2, PType type) const {return siteEnergies[id2][type] - siteEnergies[id1][type];}
+
+  double getEnergy(int id, PType type) const {return siteEnergies[id][type];}
+  Eigen::Vector3d getCoordinates(int id) const {return siteLocations[id];}
+  
+
 
 private:
   std::vector<Eigen::Vector3d> siteLocations;
@@ -21,4 +31,7 @@ private:
   std::vector<MType> moleculeType;
   std::array<std::array<double,3>,2> lambdaXtoN;
   std::array<std::array<double,3>,2> lambdaNtoX;
+  double EField_x;
+  double kBT;
+
 };

@@ -11,7 +11,6 @@
  **************************************************/
 #pragma once
 #include <ctime>
-#include <boost/format.hpp>
 #include <string>
 #include <vector>
 #include "Site.h"

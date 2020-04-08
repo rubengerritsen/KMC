@@ -20,9 +20,7 @@
 class RandomEngine {
 public:
     RandomEngine(int seed) { rng = std::mt19937_64(seed); }
-    void initializeParameters(std::array<double, 4> mu, std::array<double, 4> sigma);
     void setNrOfSites(int nr) { siteDist = std::uniform_int_distribution<int>(0,nr-1); }
-    double getDOSEnergy(PType type) { return dos[type](rng); }
     double getUniform01() { return uniform01(rng); }
     int getRandomSite() { return siteDist(rng); }
     double getInterArrivalTime(double rate) { return -(1.0 / rate) * log(uniform01(rng)); }

@@ -9,22 +9,7 @@
  **************************************************/
 
 #include "Site.h"
-#include <vector>
 #include <iostream>
-#include "Particle.h"
-#include "EnumNames.h"
-
-Site::Site(Eigen::Vector3d coord, std::vector<double> energies) : coord(coord), energies(energies)
-{
-	if (energies.size() != 4) {
-	std::cout << "Site initialized with wrong number of energies\n";
-	}
-}
-
-std::ostream& operator<<(std::ostream& os, const Site& st) {
-	os << st.getCoordinates();
-	return os;
-}
 
 int Site::isOccupiedBy(PType type) const { 
 	if (occupied[type]){
