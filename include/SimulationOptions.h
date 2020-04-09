@@ -1,5 +1,7 @@
+#pragma once
 struct SimulationOptions {
-    double maxTime = 10.0;
+    int simID = 0;
+    double maxTime = 1000000.0;
     double printAt = 0.1;
     int nrOfElectrons = 10;
     int nrOfHoles = 10;

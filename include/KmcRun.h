@@ -14,7 +14,6 @@
 #include "Neighbourlist.h"
 #include "NextEventList.h"
 #include "OutputManager.h"
-#include "PBC.h"
 #include "RandomEngine.h"
 #include "RateEngine2.h"
 #include "SimulationOptions.h"
@@ -26,7 +25,11 @@
 class KmcRun {
 public:
   KmcRun(const Topology &topol, const Neighbourlist &nbList,
-         const SimulationOptions simOptions): topol(topol), nbList(nbList), rate_engine(simOptions.EField_x, simOptions.kBT ), simOptions(simOptions), random_engine(simOptions.SEED) {
+         const SimulationOptions simOptions)
+      : topol(topol), nbList(nbList),
+        rate_engine(simOptions.EField_x, simOptions.kBT),
+        simOptions(simOptions), random_engine(simOptions.SEED),
+        out(simOptions.simID) {
     int totalNrOfParticles;
     totalNrOfParticles = simOptions.nrOfElectrons + simOptions.nrOfHoles +
                          simOptions.nrOfSinglets;
@@ -42,6 +45,7 @@ private:
   RateEngine2 rate_engine;
   RandomEngine random_engine;
   NextEventList next_event_list{};
+  OutputManager out;
 
   /* Storage for the sites and particles */
   std::vector<Site> siteList;

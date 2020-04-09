@@ -10,26 +10,24 @@
 #include "EnumNames.h"
 #include "KmcRun.h"
 #include "Neighbourlist.h"
-#include "PBC.h"
-#include "Particle.h"
 #include "RandomEngine.h"
-#include "RateEngine.h"
-#include "Site.h"
+#include "SimulationOptions.h"
 #include "Topology.h"
-#include "TestCase.h"
 #include <array>
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <fstream>
 #include <iostream>
-#include <string>
 #include <omp.h>
+#include <string>
+#include <sys/wait.h>
+#include <unistd.h>
 
-
-void runSimulation(const Topology& topol, const Neighbourlist& nbList, int simID){
-  TestCase test(topol, nbList, simID);
-  test.printTopTest();
+void runSimulation(const Topology &topol,
+                   const Neighbourlist &nbList, SimulationOptions simOptions) {
+  KmcRun simulation(topol, nbList, simOptions);
+  simulation.runSimulation();
 }
 
 void setupAndExecuteSimulation(int ac, char *av[]) {
@@ -38,14 +36,11 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   /* First we parse the command line arguments */
   /*********************************************/
   std::string optionFile;
-  int nrOfThreads = 1;
   try {
     boost::program_options::options_description desc("Possible options");
     desc.add_options()("help,h", "produce help message")(
         "optionfile,o", boost::program_options::value<std::string>(),
-        "path to option file (required)")("threads,t",
-                                          boost::program_options::value<int>(),
-                                          "number of threads to use");
+        "path to option file (required)");
 
     boost::program_options::variables_map vm;
     boost::program_options::store(
@@ -62,16 +57,11 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
       optionFile = vm["optionfile"].as<std::string>();
       std::cout << "Using optionfile: " << optionFile << ".\n";
     } else {
-      std::cout << "No option file specified.\nTrying default option file: ../input/options.xml\n";
+      std::cout << "No option file specified.\nTrying default option file: "
+                   "../input/options.xml\n";
       optionFile = "../input/options.xml";
     }
 
-    if (vm.count("threads")) {
-      std::cout << "Using " << vm["threads"].as<int>() << " threads.\n";
-      nrOfThreads = vm["threads"].as<int>();
-    } else {
-      std::cout << "Default number of threads (1) will be used.\n";
-    }
   } catch (std::exception &e) {
     std::cerr << "error: " << e.what() << "\n";
     exit(EXIT_FAILURE);
@@ -90,7 +80,8 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   options = pt.get_child("options");
 
   // Load Topology
-  Topology topol(options.get<double>("kBT"), options.get<double>("electricField_x"));
+  Topology topol(options.get<double>("kBT"),
+                 options.get<double>("electricField_x"));
   topol.readTopologyFromFile(options.get<std::string>("pathToSites"));
   std::cout << "Loaded " << topol.getNrOfSites() << " sites from "
             << options.get<std::string>("pathToSites") << std::endl;
@@ -108,23 +99,50 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
             << options.get<std::string>("pathToShortNB") << " and "
             << options.get<std::string>("pathToLongNB") << std::endl;
 
-  // Redesign KMC run to account for precomputed hopping
+  // Set simulation options
+  SimulationOptions simOptions;
+  simOptions.maxTime = options.get<double>("maxTime");
+  simOptions.printAt = options.get<double>("timeStep");
+  simOptions.nrOfElectrons = options.get<int>("nrOfElectrons");
+  simOptions.nrOfHoles = options.get<int>("nrOfHoles");
+  simOptions.nrOfSinglets = options.get<int>("nrOfSinglets");
+  simOptions.kBT = options.get<double>("kBT");
+  simOptions.EField_x = options.get<double>("electricField_x");
+  simOptions.SEED = options.get<int>("SEED");
 
-  omp_set_num_threads(nrOfThreads);
+  int nrOfProcesses = options.get<int>("nrOfProcesses");
+  int nrOfRuns = options.get<int>("nrOfRunsPerProcess") ;
 
-  #pragma omp parallel for
-  for(int i =0; i < 10; i++){
-    runSimulation(topol, nbList, i);
+  /**************************************************/
+  /* Now we run the actual simulations              */
+  /**************************************************/
+  // Some C trickery to run parallel simulations
+  pid_t pid, wpid;
+  int status = 0;
+
+  for (int prs = 0; prs < nrOfProcesses; prs++) {
+    pid = fork();
+    if (pid == 0) {
+      // child
+      for(int i = 0; i < nrOfRuns; i++){
+        simOptions.simID = nrOfRuns*prs + i;
+        // distort SEED with simID
+        simOptions.SEED = simOptions.SEED + simOptions.simID;
+        runSimulation(topol, nbList, simOptions);
+      }
+      exit(0);
+    } else if (pid < 0) {
+      // failure
+      std::cout << "Fork failed! \n";
+      exit(EXIT_FAILURE);
+    }
   }
+  // This is only executed in the parent process
+  while ((wpid = wait(&status)) > 0)
+    ;
 
-
-  // Run different instances of the same simulation
-
-  // Combine and merge results
-
-  PBC pbc(options.get<double>("Xmax"), options.get<double>("Ymax"),
-          options.get<double>("Zmax"));
-
+  std::cout << "Succefully completed " << nrOfRuns * nrOfProcesses << " runs of the simulation.\n";
+  // Process results
 }
 
 int main(int ac, char *av[]) {

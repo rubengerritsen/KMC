@@ -1,32 +1,20 @@
-/***************************************************
- *
- * KMC MODEL FOR OPTOELECTRIC PROCESSES
- *
- * Author: Ruben Gerritsen
- *
- * Created on 14-01-2020
- *
- * Class that handles all output.
- * 
- **************************************************/
-#pragma once
-#include <ctime>
-#include <string>
-#include <vector>
-#include "Site.h"
 #include "Particle.h"
-#include <fstream>
+#include <boost/format.hpp>
+#include <vector>
 
 class OutputManager {
 public:
-	/* Outputs a file with the site occupations and energies (ln: energy occ).*/
-	void printSiteOccupations(std::vector<Site>& siteList, double totalTime);
-
-	/* Prints the current state of all particles to the console */
-	void printParticleInfo(std::vector<Particle>&);
-
+  OutputManager(int simID) : simID(simID){
+      particlePathFile = (boost::format("%d_particlePaths.txt") % simID).str();
+      stateFile =  (boost::format("%d_state.txt") % simID).str();
+  };
+  void registerParticlePositions(const std::vector<Particle> &particleList, double time);
+  void registerState(const std::vector<Particle> &particleList, double time);
 
 private:
-	std::string outputPath = "./output/";
-
+  int simID;
+  std::string particlePathFile;
+  std::string stateFile;
+  bool firstTimePath = true;
+  bool firstTimeState = true;
 };

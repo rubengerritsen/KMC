@@ -1,52 +1,45 @@
 #include "OutputManager.h"
-#include <ctime>
-#include "EnumNames.h"
+#include <fstream>
 
+void OutputManager::registerParticlePositions(
+    const std::vector<Particle> &particleList, double time) {
 
-void OutputManager::printSiteOccupations(std::vector<Site>& siteList, double totalTime) {
+  std::ofstream outFile;
+  if (firstTimePath) {
+    outFile.open(particlePathFile);
+    firstTimePath = false;
+  } else {
+    outFile.open(particlePathFile, std::fstream::app);
+  }
 
-	struct tm * ltm;
-	time_t now = time(0);
-	ltm = localtime( &now);
-	ltm->tm_mon = ltm->tm_mon + 1;
-	std::string filename = "fiets";
-
-	std::ofstream outFile;
-	outFile.open(filename);
-	if (outFile.is_open()) {
-		for (auto& site : siteList) {
-			outFile << site.getEnergy(PType::elec) << " " << site.getOccupation(PType::elec, totalTime) / totalTime << " "
-				<< site.getEnergy(PType::hole) << " " << site.getOccupation(PType::hole, totalTime) / totalTime << " "
-				<< site.getEnergy(PType::trip) << " " << site.getOccupation(PType::trip, totalTime) / totalTime << " "
-				<< site.getEnergy(PType::sing) << " " << site.getOccupation(PType::sing, totalTime) / totalTime << "\n"; 
-		}
-		std::cout << "Site occupations were printed to:\n\t"<<  filename << "\n";
-	}
-	else {
-		std::cout << "Could not open output file: " << filename << std::endl;
-	}
-	outFile.close();
+  if (outFile.is_open()) {
+    for (auto &part : particleList) {
+      outFile << boost::format("%4d ") % part.getLocation();
+    }
+    outFile << "\n";
+  } else {
+    std::cout << "Could not open output file for simID: " << simID << "\n";
+  }
 }
 
-void OutputManager::printParticleInfo(std::vector<Particle>& particleList){
-	std::cout << "Alive particles: " << std::endl;
-	std::array<int,5> nrPerType {0};
-	for (auto& part : particleList){
-		if(part.isAlive()) nrPerType[part.getType()] += 1;
-	}
-	for (auto& elem : nrPerType){
-		std::cout << elem << "  " ;
-	}
-	std::cout << std::endl;
+void OutputManager::registerState(
+    const std::vector<Particle> &particleList, double time) {
 
-	std::cout << "Dead particles: " << std::endl;
-	nrPerType = {0, 0, 0, 0, 0};
-	for (auto& part : particleList){
-		if(!part.isAlive()) nrPerType[part.getType()] += 1;
-	}
-	for (auto& elem : nrPerType){
-		std::cout << elem << "  " ;
-	}
-	std::cout << std::endl;
+  std::ofstream outFile;
+  if (firstTimeState) {
+    outFile.open(stateFile);
+    firstTimeState = false;
+  } else {
+    outFile.open(stateFile, std::fstream::app);
+  }
 
+  if (outFile.is_open()) {
+      outFile << time << " ";
+    for (auto &part : particleList) {
+      outFile << boost::format("%d:%4d ") % part.getType() % part.getLocation();
+    }
+    outFile << "\n";
+  } else {
+    std::cout << "Could not open output file for simID: " << simID << "\n";
+  }
 }
