@@ -8,3 +8,6 @@ KMC.vcxproj.user
 .vs/
 build/
 longNB.txt
+longNB_ev.txt
+shortNB.txt
+shortNB_ev.txt
