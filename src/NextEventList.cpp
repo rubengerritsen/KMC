@@ -11,6 +11,7 @@
 
 #include "NextEventList.h"
 #include <iostream>
+#include <numeric>
 
 std::tuple<Transition, int, Neighbour> NextEventList::getNextEvent(double random01) const {
 	double cumSum = 0;
@@ -23,7 +24,9 @@ std::tuple<Transition, int, Neighbour> NextEventList::getNextEvent(double random
 		}
 	}
     std::cout << "Next event could not be found\n";
-    exit(EXIT_FAILURE);
+    std::cout << "All particles are dead or all rates are zero\n";
+    std::cout << "Terminating program.";
+    exit(EXIT_SUCCESS);
 }
 
 void NextEventList::pushNextEvent(double rate, Transition eventtype, int part, Neighbour loc) {

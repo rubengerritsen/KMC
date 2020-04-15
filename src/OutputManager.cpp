@@ -34,9 +34,9 @@ void OutputManager::registerState(
   }
 
   if (outFile.is_open()) {
-      outFile << time << " ";
+      outFile << boost::format("%12.5f") % time << " ";
     for (auto &part : particleList) {
-      outFile << boost::format("%d:%4d ") % part.getType() % part.getLocation();
+      outFile << boost::format("%d:%d:%-4d ") % part.isAlive() % part.getType() % part.getLocation();
     }
     outFile << "\n";
   } else {

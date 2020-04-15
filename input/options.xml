@@ -1,19 +1,19 @@
 <options>
     <SEED>12345</SEED>
-    <maxTime>100000</maxTime>
+    <maxTime help="picoseconds">10000</maxTime>
     <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
-    <nrOfRunsPerProcess>4</nrOfRunsPerProcess>
-    <nrOfProcesses>4</nrOfProcesses>
+    <nrOfRunsPerProcess>1</nrOfRunsPerProcess>
+    <nrOfProcesses help="total number of simulations = nrOfProcesses*nrOfRunsPerProcess">1</nrOfProcesses>
     <Xmax>10</Xmax>
     <Ymax>10</Ymax>
     <Zmax>10</Zmax>
-    <kBT help="in eV">0.026</kBT>
-    <electricField_x>0.4</electricField_x>
-    <nrOfElectrons>6</nrOfElectrons>
-    <nrOfHoles>6</nrOfHoles>
+    <kBT help="in Hartree">0.026</kBT>
+    <electricField_x>0.0</electricField_x>
+    <nrOfElectrons>5</nrOfElectrons>
+    <nrOfHoles>5</nrOfHoles>
     <nrOfSinglets>0</nrOfSinglets>
     <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies.txt</pathToSites>
-    <pathToShortNB help="path to file with short range neighbours">../input/shortNB.txt</pathToShortNB>
-    <pathToLongNB help="path to file with long range neighbours">../input/longNB.txt</pathToLongNB>
+    <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev.txt</pathToShortNB>
+    <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev.txt</pathToLongNB>
     <pathToLambdas>../input/reorganisation.xml</pathToLambdas>
 </options>

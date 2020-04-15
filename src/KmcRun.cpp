@@ -155,11 +155,11 @@ void KmcRun::computeNextEventRates() {
               !siteList[nb.nb].isOccupied(PType::trip)) {
 
             next_event_list.pushNextEvent(nb.rate_s, Transition::normalhop, i,
-                                          nb); // normal "forster" hop
+                                          nb);
           }
         }
         // ... it can decay ...
-        next_event_list.pushNextEvent(0, Transition::decay, i, empty_nb);
+        next_event_list.pushNextEvent(rate_engine.singletDecay(topol.getEnergy(part.getLocation(),PType::sing), topol.getMolType(part.getLocation())), Transition::decay, i, empty_nb);
         // ... or it will dissociate into a CT state.
         for (const auto &nb : nbList.getSRNeighbours(
                  part.getLocation())) { // Note: short range neighbourlist here

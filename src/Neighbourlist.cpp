@@ -66,11 +66,11 @@ void Neighbourlist::setupLongRangeNeighbours(std::string filename,
 
       temp1.rate_s = rates.marcusRate(
           j2_s, topol.getLambda(id1, id2, PType::sing),
-          topol.getDeltaEnergy(id1, id2, PType::sing), temp_dr[0], PType::elec);
+          topol.getDeltaEnergy(id1, id2, PType::sing), temp_dr[0], PType::sing);
       temp2.rate_s =
           rates.marcusRate(j2_s, topol.getLambda(id2, id1, PType::sing),
                            topol.getDeltaEnergy(id2, id1, PType::sing),
-                           -temp_dr[0], PType::elec);
+                           -temp_dr[0], PType::sing);
 
       lRNeighbours[id1].push_back(temp1);
       lRNeighbours[id2].push_back(temp2);

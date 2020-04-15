@@ -19,6 +19,7 @@ public:
   double getEField() const {return EField_x;}
   double getLambda(int id1, int id2, PType type) const {return lambdaXtoN[moleculeType[id1]][type] + lambdaNtoX[moleculeType[id2]][type];} 
   double getDeltaEnergy(int id1, int id2, PType type) const {return siteEnergies[id2][type] - siteEnergies[id1][type];}
+  MType getMolType(int id) const {return moleculeType[id];}
 
   double getEnergy(int id, PType type) const {return siteEnergies[id][type];}
   Eigen::Vector3d getCoordinates(int id) const {return siteLocations[id];}
