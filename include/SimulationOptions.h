@@ -9,4 +9,5 @@ struct SimulationOptions {
     double kBT = 0.026;
     double EField_x = 0.0;
     int SEED = 12345;
+    bool allSinglets = true;
 };

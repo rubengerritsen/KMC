@@ -8,7 +8,7 @@ void Neighbourlist::setupShortRangeNeighbours(std::string filename,
                                               const Topology &topol) {
   std::ifstream file(filename);
   if (file.is_open()) {
-    RateEngine2 rates(topol.getEField(), topol.getKBT());
+    RateEngine2 rates(topol.getEField(), topol.getKBT(), topol.getRateOptions());
     int id1, id2;
     double dx, dy, dz;
     double j2_e, j2_h;
@@ -35,6 +35,17 @@ void Neighbourlist::setupShortRangeNeighbours(std::string filename,
           rates.marcusRate(j2_h, topol.getLambda(id2, id1, PType::hole),
                            topol.getDeltaEnergy(id2, id1, PType::hole),
                            -temp_dr[0], PType::hole);
+      // SINGLET GENERATION RATES
+      temp1.rate_h_s = rates.singletGeneration(temp_dr, topol.getDeltaEnergy(id1,id2, PType::hole), topol.getSingletBindingEnergy(id2), PType::hole) ;
+      temp2.rate_h_s = rates.singletGeneration(-temp_dr, topol.getDeltaEnergy(id2,id1, PType::hole), topol.getSingletBindingEnergy(id1), PType::hole) ;
+      temp1.rate_e_s = rates.singletGeneration(temp_dr, topol.getDeltaEnergy(id1,id2, PType::elec), topol.getSingletBindingEnergy(id2), PType::elec) ;
+      temp2.rate_e_s = rates.singletGeneration(-temp_dr, topol.getDeltaEnergy(id2,id1, PType::elec), topol.getSingletBindingEnergy(id1), PType::elec) ;
+      // SINGLET DISSOCIATION RATES S->CT
+      temp1.rate_s_ct_e = rates.singletDissociationCT(temp_dr, topol.getDeltaEnergy(id1,id2, PType::elec), topol.getSingletBindingEnergy(id2), PType::elec);
+      temp2.rate_s_ct_e = rates.singletDissociationCT(-temp_dr, topol.getDeltaEnergy(id2,id1, PType::elec), topol.getSingletBindingEnergy(id1), PType::elec);
+      temp1.rate_s_ct_h = rates.singletDissociationCT(temp_dr, topol.getDeltaEnergy(id1,id2, PType::hole), topol.getSingletBindingEnergy(id2), PType::hole);
+      temp2.rate_s_ct_h = rates.singletDissociationCT(-temp_dr, topol.getDeltaEnergy(id2,id1, PType::hole), topol.getSingletBindingEnergy(id1), PType::hole);
+
       sRNeighbours[id1].push_back(temp1);
       sRNeighbours[id2].push_back(temp2);
     }
@@ -49,7 +60,7 @@ void Neighbourlist::setupShortRangeNeighbours(std::string filename,
 void Neighbourlist::setupLongRangeNeighbours(std::string filename,
                                              const Topology &topol) {
   std::ifstream file(filename);
-  RateEngine2 rates(topol.getEField(), topol.getKBT());
+  RateEngine2 rates(topol.getEField(), topol.getKBT(), topol.getRateOptions());
   if (file.is_open()) {
     int id1, id2;
     double dx, dy, dz;

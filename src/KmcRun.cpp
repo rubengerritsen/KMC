@@ -9,11 +9,11 @@
  **************************************************/
 #include "KmcRun.h"
 #include "Neighbour.h"
+#include <boost/format.hpp>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <tuple>
-#include <fstream>
-#include <boost/format.hpp>
 
 void KmcRun::runSimulation() {
   std::chrono::steady_clock::time_point begin =
@@ -26,14 +26,15 @@ void KmcRun::runSimulation() {
 
   int progress = 0;
 
-  out.registerParticlePositions(particleList,totalTime);
-  out.registerState(particleList,totalTime);
+  // out.registerParticlePositions(particleList, totalTime);
+  // out.registerState(particleList, totalTime);
+  out.registerNumbers(particleList, totalTime);
 
   while (totalTime < simOptions.maxTime) {
     computeNextEventRates();
     executeNextEvent();
-    out.registerParticlePositions(particleList,totalTime);
-    out.registerState(particleList,totalTime);
+    out.registerParticlePositions(particleList, totalTime);
+    out.registerState(particleList, totalTime);
   }
   std::cout << std::endl;
 
@@ -47,9 +48,9 @@ void KmcRun::runSimulation() {
       << (std::chrono::duration_cast<std::chrono::seconds>(end - begin).count())
       << "s" << std::endl;
 
-	std::ofstream outFile;
-	std::string filename = boost::str(boost::format("%i.txt") % simOptions.SEED);
-	outFile.open(filename);
+  std::ofstream outFile;
+  std::string filename = boost::str(boost::format("%i.txt") % simOptions.SEED);
+  outFile.open(filename);
 }
 
 void KmcRun::initializeSites() {
@@ -59,46 +60,54 @@ void KmcRun::initializeSites() {
 
 void KmcRun::initializeParticles() {
   Particle *tempParticle;
-  int location = 0;
-  int partID = 0;
-  /* electrons */
-  for (int i = 0; i < simOptions.nrOfElectrons; ++i) {
-    location = random_engine.getRandomSite();
-    while (siteList[location].isOccupied(PType::elec)) { // Get a unique
-                                                         // location
-      location = random_engine.getRandomSite();
+  if (simOptions.allSinglets) {
+    for (int i = 0; i < topol.getNrOfSites(); ++i) {
+      tempParticle = new Particle(i, PType::sing);
+      particleList.push_back(*tempParticle);
+      siteList[i].setOccupied(PType::sing, i, 0.0);
     }
-    tempParticle = new Particle(location, PType::elec);
-    particleList.push_back(*tempParticle);
-    siteList[location].setOccupied(PType::elec, partID, 0.0);
-    partID++;
-  }
-  /* holes */
-  for (int i = 0; i < simOptions.nrOfHoles; ++i) {
-    location = random_engine.getRandomSite();
-    while (
-        siteList[location].isOccupied(PType::elec) ||
-        siteList[location].isOccupied(PType::hole)) { // Get a unique location
+  } else {
+    int location = 0;
+    int partID = 0;
+    /* electrons */
+    for (int i = 0; i < simOptions.nrOfElectrons; ++i) {
       location = random_engine.getRandomSite();
+      while (siteList[location].isOccupied(PType::elec)) { // Get a unique
+                                                           // location
+        location = random_engine.getRandomSite();
+      }
+      tempParticle = new Particle(location, PType::elec);
+      particleList.push_back(*tempParticle);
+      siteList[location].setOccupied(PType::elec, partID, 0.0);
+      partID++;
     }
-    tempParticle = new Particle(location, PType::hole);
-    particleList.push_back(*tempParticle);
-    siteList[location].setOccupied(PType::hole, partID, 0.0);
-    partID++;
-  }
-  /* singlets */
-  for (int i = 0; i < simOptions.nrOfSinglets; ++i) {
-    location = random_engine.getRandomSite();
-    while (
-        siteList[location].isOccupied(PType::elec) ||
-        siteList[location].isOccupied(PType::hole) ||
-        siteList[location].isOccupied(PType::sing)) { // Get a unique location
+    /* holes */
+    for (int i = 0; i < simOptions.nrOfHoles; ++i) {
       location = random_engine.getRandomSite();
+      while (
+          siteList[location].isOccupied(PType::elec) ||
+          siteList[location].isOccupied(PType::hole)) { // Get a unique location
+        location = random_engine.getRandomSite();
+      }
+      tempParticle = new Particle(location, PType::hole);
+      particleList.push_back(*tempParticle);
+      siteList[location].setOccupied(PType::hole, partID, 0.0);
+      partID++;
     }
-    tempParticle = new Particle(location, PType::sing);
-    particleList.push_back(*tempParticle);
-    siteList[location].setOccupied(PType::sing, partID, 0.0);
-    partID++;
+    /* singlets */
+    for (int i = 0; i < simOptions.nrOfSinglets; ++i) {
+      location = random_engine.getRandomSite();
+      while (
+          siteList[location].isOccupied(PType::elec) ||
+          siteList[location].isOccupied(PType::hole) ||
+          siteList[location].isOccupied(PType::sing)) { // Get a unique location
+        location = random_engine.getRandomSite();
+      }
+      tempParticle = new Particle(location, PType::sing);
+      particleList.push_back(*tempParticle);
+      siteList[location].setOccupied(PType::sing, partID, 0.0);
+      partID++;
+    }
   }
 }
 
@@ -118,8 +127,8 @@ void KmcRun::computeNextEventRates() {
             ; // nothing happens
           } else if (siteList[nb.nb].isOccupied(
                          PType::hole)) { // exciton generation
-            next_event_list.pushNextEvent(0, Transition::excitonFromElec, i,
-                                          nb);
+            next_event_list.pushNextEvent(nb.rate_e_s,
+                                          Transition::excitonFromElec, i, nb);
           } else { // normal hop
             next_event_list.pushNextEvent(nb.rate_e, Transition::normalhop, i,
                                           nb);
@@ -135,8 +144,8 @@ void KmcRun::computeNextEventRates() {
             ; // nothing happens
           } else if (siteList[nb.nb].isOccupied(
                          PType::elec)) { // exciton generation
-            next_event_list.pushNextEvent(0, Transition::excitonFromHole, i,
-                                          nb);
+            next_event_list.pushNextEvent(nb.rate_h_s,
+                                          Transition::excitonFromHole, i, nb);
           } else { // normal hop
             next_event_list.pushNextEvent(nb.rate_h, Transition::normalhop, i,
                                           nb);
@@ -159,7 +168,11 @@ void KmcRun::computeNextEventRates() {
           }
         }
         // ... it can decay ...
-        next_event_list.pushNextEvent(rate_engine.singletDecay(topol.getEnergy(part.getLocation(),PType::sing), topol.getMolType(part.getLocation())), Transition::decay, i, empty_nb);
+        next_event_list.pushNextEvent(
+            rate_engine.singletDecay(
+                topol.getEnergy(part.getLocation(), PType::sing),
+                topol.getMolType(part.getLocation())),
+            Transition::decay, i, empty_nb);
         // ... or it will dissociate into a CT state.
         for (const auto &nb : nbList.getSRNeighbours(
                  part.getLocation())) { // Note: short range neighbourlist here
@@ -168,28 +181,24 @@ void KmcRun::computeNextEventRates() {
               !siteList[nb.nb].isOccupied(PType::CT) &&
               !siteList[nb.nb].isOccupied(PType::sing)) {
 
-            next_event_list.pushNextEvent(0, Transition::singToCTViaElec, i,
-                                          nb);
-            next_event_list.pushNextEvent(0, Transition::singToCTViaHole, i,
-                                          nb);
+            next_event_list.pushNextEvent(nb.rate_s_ct_e,
+                                          Transition::singToCTViaElec, i, nb);
+            next_event_list.pushNextEvent(nb.rate_s_ct_h,
+                                          Transition::singToCTViaHole, i, nb);
           }
         }
         break;
       case PType::CT:
-        // it can recombine into an exciton (either the hole follows the
-        // electron or vice versa) or ...
-        //next_event_list.pushNextEvent(0, Transition::excitonFromElecCT, i,
-              //                        part.getLocation());
-        //next_event_list.pushNextEvent(0, Transition::excitonFromHoleCT, i,
-          //                            part.getLocationCTelec());
-        // ... it can separate into free charges
+        // It can separate into free charges
         for (const auto &nb : nbList.getSRNeighbours(part.getLocation())) {
           if (!siteList[nb.nb].isOccupied(PType::elec) &&
               !siteList[nb.nb].isOccupied(PType::hole) &&
               !siteList[nb.nb].isOccupied(PType::CT) &&
               !siteList[nb.nb].isOccupied(PType::sing)) {
 
-            next_event_list.pushNextEvent(0, Transition::CTdisViaHole, i, nb);
+            next_event_list.pushNextEvent(
+                rate_engine.ctDissociation(nb.dr, topol.getDeltaEnergy(part.getLocation(),nb.nb, PType::hole), PType::hole),
+                Transition::CTdisViaHole, i, nb);
           }
         }
         for (const auto &nb :
@@ -199,7 +208,9 @@ void KmcRun::computeNextEventRates() {
               !siteList[nb.nb].isOccupied(PType::CT) &&
               !siteList[nb.nb].isOccupied(PType::sing)) {
 
-            next_event_list.pushNextEvent(0, Transition::CTdisViaElec, i, nb);
+            next_event_list.pushNextEvent(
+                rate_engine.ctDissociation(nb.dr,  topol.getDeltaEnergy(part.getLocationCTelec(),nb.nb, PType::elec), PType::elec),
+                Transition::CTdisViaElec, i, nb);
           }
         }
         break;
@@ -240,7 +251,8 @@ void KmcRun::executeNextEvent() {
     siteList[oldLocation].freeSite(PType::elec, totalTime);
     type = particleList[siteList[newLocation.nb].isOccupiedBy(PType::hole)]
                .makeExciton(random_engine.getUniform01());
-    siteList[newLocation.nb].changeOccupied(PType::hole, type, partID, totalTime);
+    siteList[newLocation.nb].changeOccupied(PType::hole, type, partID,
+                                            totalTime);
     part.killParticle(totalTime);
     break;
 
@@ -258,7 +270,8 @@ void KmcRun::executeNextEvent() {
     siteList[oldLocation].freeSite(PType::hole, totalTime);
     type = particleList[siteList[newLocation.nb].isOccupiedBy(PType::elec)]
                .makeExciton(random_engine.getUniform01());
-    siteList[newLocation.nb].changeOccupied(PType::elec, type, partID, totalTime);
+    siteList[newLocation.nb].changeOccupied(PType::elec, type, partID,
+                                            totalTime);
     part.killParticle(totalTime);
     break;
 

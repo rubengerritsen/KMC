@@ -11,6 +11,7 @@
 #include "KmcRun.h"
 #include "Neighbourlist.h"
 #include "RandomEngine.h"
+#include "RateOptions.h"
 #include "SimulationOptions.h"
 #include "Topology.h"
 #include <array>
@@ -20,12 +21,13 @@
 #include <fstream>
 #include <iostream>
 #include <omp.h>
+#include <sstream>
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
 
-void runSimulation(const Topology &topol,
-                   const Neighbourlist &nbList, SimulationOptions simOptions) {
+void runSimulation(const Topology &topol, const Neighbourlist &nbList,
+                   SimulationOptions simOptions) {
   KmcRun simulation(topol, nbList, simOptions);
   simulation.runSimulation();
 }
@@ -102,6 +104,7 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   // Set simulation options
   SimulationOptions simOptions;
   simOptions.maxTime = options.get<double>("maxTime");
+  simOptions.allSinglets = options.get<bool>("allSinglets");
   simOptions.printAt = options.get<double>("timeStep");
   simOptions.nrOfElectrons = options.get<int>("nrOfElectrons");
   simOptions.nrOfHoles = options.get<int>("nrOfHoles");
@@ -111,7 +114,30 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   simOptions.SEED = options.get<int>("SEED");
 
   int nrOfProcesses = options.get<int>("nrOfProcesses");
-  int nrOfRuns = options.get<int>("nrOfRunsPerProcess") ;
+  int nrOfRuns = options.get<int>("nrOfRunsPerProcess");
+
+  // Set rate options
+  RateOptions rOptions;
+  rOptions.sqrtDielectric = options.get<double>("rates.sqrtDielectric");
+  std::stringstream mu2(options.get_child("rates.mu2").data());
+  std::stringstream charge(options.get_child("rates.charge").data());
+  std::stringstream alpha(options.get_child("rates.alpha").data());
+  std::stringstream attempt(options.get_child("rates.attempt").data());
+
+  float data;
+  for (int i = 0; i < 2; i++) {
+    mu2 >> data;
+    rOptions.mu2[i] = data;
+  }
+  for (int i = 0; i < 4; i++) {
+    charge >> data;
+    rOptions.charge[i] = data;
+    alpha >> data;
+    rOptions.alpha[i] = data;
+    attempt >> data;
+    rOptions.attempt[i] = data;
+  }
+  topol.setRateOptions(rOptions);
 
   /**************************************************/
   /* Now we run the actual simulations              */
@@ -124,13 +150,13 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
     pid = fork();
     if (pid == 0) {
       // child
-      for(int i = 0; i < nrOfRuns; i++){
-        simOptions.simID = nrOfRuns*prs + i;
+      for (int i = 0; i < nrOfRuns; i++) {
+        simOptions.simID = nrOfRuns * prs + i;
         // distort SEED with simID
         simOptions.SEED = simOptions.SEED + simOptions.simID;
         runSimulation(topol, nbList, simOptions);
       }
-      exit(0);
+      exit(EXIT_SUCCESS);
     } else if (pid < 0) {
       // failure
       std::cout << "Fork failed! \n";
@@ -141,7 +167,8 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   while ((wpid = wait(&status)) > 0)
     ;
 
-  std::cout << "Succefully completed " << nrOfRuns * nrOfProcesses << " runs of the simulation.\n";
+  std::cout << "Succefully completed " << nrOfRuns * nrOfProcesses
+            << " runs of the simulation.\n";
   // Process results
 }
 

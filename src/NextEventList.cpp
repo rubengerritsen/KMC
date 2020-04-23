@@ -17,16 +17,16 @@ std::tuple<Transition, int, Neighbour> NextEventList::getNextEvent(double random
 	double cumSum = 0;
 	double select = totalRate * random01;
 
+    if(totalRate <= 0.0 || cPos == 0){
+        std::cout << "No next event, program done.\n";
+        exit(EXIT_SUCCESS);
+    }
 	for (int i = 0; i < cPos ; ++i) { // Note cPos here is smaller then rateList.size()
 		cumSum += rateList[i];
 		if (cumSum >= select) {
             return std::tuple<Transition, int, Neighbour> {eventType[i], partList[i], newLocation[i]};
 		}
 	}
-    std::cout << "Next event could not be found\n";
-    std::cout << "All particles are dead or all rates are zero\n";
-    std::cout << "Terminating program.";
-    exit(EXIT_SUCCESS);
 }
 
 void NextEventList::pushNextEvent(double rate, Transition eventtype, int part, Neighbour loc) {

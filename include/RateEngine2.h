@@ -2,22 +2,33 @@
 #include "EnumNames.h"
 #include <array>
 #include "constants.h"
+#include <Eigen/Dense>
+#include "RateOptions.h"
 
 class RateEngine2 {
 public:
-  RateEngine2(double EField_x, double kBT) : EField_x(EField_x), kBT(kBT) {
-    mu2[MType::ben] = std::pow(0.235601519, 2); 
-    mu2[MType::tcne] = std::pow(0.1987388, 2);// bohr2nm * 3.7556 = 0.1987...
+  RateEngine2(double EField_x, double kBT, RateOptions options) : EField_x(EField_x), kBT(kBT) {
+    sqrtDielectric = options.sqrtDielectric;
+    mu2 = options.mu2;
+    charge = options.charge;
+    alpha = options.alpha;
+    attempt = options.attempt;
   }
 
   double marcusRate(double jeff2, double lambda_ij, double deltaE, double dx,
-                    PType type);
-  double singletDecay(double singletEnergy, MType type);
+                    PType type) const;
+  double singletDecay(double singletEnergy, MType type) const;
+  double millerAbrahams(Eigen::Vector3d dr, double deltaE, PType type) const;
+  double singletGeneration(Eigen::Vector3d dr, double deltaE,  double singletBinding, PType type) const;
+  double singletDissociationCT(Eigen::Vector3d dr, double deltaE,  double singletBinding, PType type) const;
+  double ctDissociation(Eigen::Vector3d dr, double deltaE, PType type) const;
 
 private:
   double kBT;
   double EField_x;
-  double sqrtDielectric = std::sqrt(2.28); // value of benzene solution
+  double sqrtDielectric; 
   std::array<double, 2> mu2;
-  std::array<double, 4> charge{-1.0, 1.0, 0.0, 0.0};
+  std::array<double, 4> charge;
+  std::array<double, 4> alpha;
+  std::array<double, 4> attempt;
 };
