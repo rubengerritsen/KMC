@@ -1,6 +1,6 @@
 <options>
     <SEED>12345</SEED>
-    <allSinglets>0</allSinglets>
+    <allSinglets>1</allSinglets>
     <maxTime help="picoseconds">100</maxTime>
     <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
     <nrOfRunsPerProcess>1</nrOfRunsPerProcess>
@@ -13,7 +13,7 @@
     <nrOfElectrons>5</nrOfElectrons>
     <nrOfHoles>5</nrOfHoles>
     <nrOfSinglets>10</nrOfSinglets>
-    <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies.txt</pathToSites>
+    <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct.txt</pathToSites>
     <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev.txt</pathToShortNB>
     <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev.txt</pathToLongNB>
     <pathToLambdas>../input/reorganisation.xml</pathToLambdas>

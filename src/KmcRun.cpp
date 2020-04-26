@@ -28,13 +28,14 @@ void KmcRun::runSimulation() {
 
   // out.registerParticlePositions(particleList, totalTime);
   // out.registerState(particleList, totalTime);
-  out.registerNumbers(particleList, totalTime);
+  out.registerNumbers(particleList, topol, totalTime);
 
   while (totalTime < simOptions.maxTime) {
     computeNextEventRates();
     executeNextEvent();
-    out.registerParticlePositions(particleList, totalTime);
-    out.registerState(particleList, totalTime);
+    // out.registerParticlePositions(particleList, totalTime);
+    // out.registerState(particleList, totalTime);
+    out.registerNumbers(particleList, topol, totalTime);
   }
   std::cout << std::endl;
 
@@ -197,7 +198,11 @@ void KmcRun::computeNextEventRates() {
               !siteList[nb.nb].isOccupied(PType::sing)) {
 
             next_event_list.pushNextEvent(
-                rate_engine.ctDissociation(nb.dr, topol.getDeltaEnergy(part.getLocation(),nb.nb, PType::hole), PType::hole),
+                rate_engine.ctDissociation(
+                    nb.dr,
+                    topol.getDeltaEnergy(part.getLocation(), nb.nb,
+                                         PType::hole),
+                    PType::hole),
                 Transition::CTdisViaHole, i, nb);
           }
         }
@@ -209,7 +214,11 @@ void KmcRun::computeNextEventRates() {
               !siteList[nb.nb].isOccupied(PType::sing)) {
 
             next_event_list.pushNextEvent(
-                rate_engine.ctDissociation(nb.dr,  topol.getDeltaEnergy(part.getLocationCTelec(),nb.nb, PType::elec), PType::elec),
+                rate_engine.ctDissociation(
+                    nb.dr,
+                    topol.getDeltaEnergy(part.getLocationCTelec(), nb.nb,
+                                         PType::elec),
+                    PType::elec),
                 Transition::CTdisViaElec, i, nb);
           }
         }

@@ -1,6 +1,7 @@
 #include "Particle.h"
 #include <boost/format.hpp>
 #include <vector>
+#include "Topology.h"
 
 class OutputManager {
 public:
@@ -12,7 +13,8 @@ public:
   void registerParticlePositions(const std::vector<Particle> &particleList,
                                  double time);
   void registerState(const std::vector<Particle> &particleList, double time);
-  void registerNumbers(const std::vector<Particle> &particleList, double time);
+  void registerNumbers(const std::vector<Particle> &particleList,
+                       const Topology &topol, double time);
 
 private:
   int simID;
