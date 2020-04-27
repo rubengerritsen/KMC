@@ -1,10 +1,10 @@
 <options>
     <SEED>12345</SEED>
     <allSinglets>1</allSinglets>
-    <maxTime help="picoseconds">100</maxTime>
+    <maxTime help="picoseconds">10</maxTime>
     <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
     <nrOfRunsPerProcess>1</nrOfRunsPerProcess>
-    <nrOfProcesses help="total number of simulations = nrOfProcesses*nrOfRunsPerProcess">1</nrOfProcesses>
+    <nrOfProcesses>7</nrOfProcesses>
     <Xmax>10</Xmax>
     <Ymax>10</Ymax>
     <Zmax>10</Zmax>

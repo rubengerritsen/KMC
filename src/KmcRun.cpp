@@ -48,10 +48,6 @@ void KmcRun::runSimulation() {
       << "Total simulation time: "
       << (std::chrono::duration_cast<std::chrono::seconds>(end - begin).count())
       << "s" << std::endl;
-
-  std::ofstream outFile;
-  std::string filename = boost::str(boost::format("%i.txt") % simOptions.SEED);
-  outFile.open(filename);
 }
 
 void KmcRun::initializeSites() {
@@ -181,11 +177,13 @@ void KmcRun::computeNextEventRates() {
               !siteList[nb.nb].isOccupied(PType::hole) &&
               !siteList[nb.nb].isOccupied(PType::CT) &&
               !siteList[nb.nb].isOccupied(PType::sing)) {
-
-            next_event_list.pushNextEvent(nb.rate_s_ct_e,
-                                          Transition::singToCTViaElec, i, nb);
-            next_event_list.pushNextEvent(nb.rate_s_ct_h,
-                                          Transition::singToCTViaHole, i, nb);
+                // No CT-states with two same molecule types
+                if( topol.getMolType(part.getLocation()) != topol.getMolType(nb.nb)){
+              next_event_list.pushNextEvent(nb.rate_s_ct_e,
+                                            Transition::singToCTViaElec, i, nb);
+              next_event_list.pushNextEvent(nb.rate_s_ct_h,
+                                            Transition::singToCTViaHole, i, nb);
+                }
           }
         }
         break;
