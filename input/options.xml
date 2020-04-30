@@ -1,10 +1,11 @@
 <options>
     <SEED>12345</SEED>
+    <simName help="a name added to the output folder">sim</simName>
     <allSinglets>1</allSinglets>
-    <maxTime help="picoseconds">10</maxTime>
+    <maxTime help="picoseconds">1500</maxTime>
     <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
     <nrOfRunsPerProcess>1</nrOfRunsPerProcess>
-    <nrOfProcesses>7</nrOfProcesses>
+    <nrOfProcesses>6</nrOfProcesses>
     <Xmax>10</Xmax>
     <Ymax>10</Ymax>
     <Zmax>10</Zmax>
@@ -23,5 +24,6 @@
         <charge>-1.0 1.0 0.0 0.0</charge>
         <alpha>4.69 5.86 1.0 1.0</alpha>
         <attempt>2.49e4 5.63e4 1.0 1.0</attempt>
+        <dielectricConstant>8.0</dielectricConstant>
     </rates>
 </options>

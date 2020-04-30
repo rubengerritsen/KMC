@@ -29,7 +29,7 @@ public:
       : topol(topol), nbList(nbList),
         rate_engine(simOptions.EField_x, simOptions.kBT, topol.getRateOptions()),
         simOptions(simOptions), random_engine(simOptions.SEED),
-        out(simOptions.simID) {
+        out(simOptions) {
     int totalNrOfParticles;
     totalNrOfParticles = simOptions.nrOfElectrons + simOptions.nrOfHoles +
                          simOptions.nrOfSinglets;

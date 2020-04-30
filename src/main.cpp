@@ -15,9 +15,11 @@
 #include "SimulationOptions.h"
 #include "Topology.h"
 #include <array>
+#include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <omp.h>
@@ -119,6 +121,7 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   // Set rate options
   RateOptions rOptions;
   rOptions.sqrtDielectric = options.get<double>("rates.sqrtDielectric");
+  rOptions.dieletricConstant = options.get<double>("rates.dielectricConstant");
   std::stringstream mu2(options.get_child("rates.mu2").data());
   std::stringstream charge(options.get_child("rates.charge").data());
   std::stringstream alpha(options.get_child("rates.alpha").data());
@@ -138,6 +141,28 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
     rOptions.attempt[i] = data;
   }
   topol.setRateOptions(rOptions);
+
+  // setup output folder
+  struct tm *ltm;
+  time_t now = time(0);
+  ltm = localtime(&now);
+  ltm->tm_mon = ltm->tm_mon + 1;
+  ltm->tm_year = ltm->tm_year + 1900;
+  std::string foldername =
+      "./" +
+      (boost::format("%04d%02d%02d_%02d%02d_") % ltm->tm_year % ltm->tm_mon %
+          ltm->tm_mday % ltm->tm_hour % ltm->tm_min).str() +
+      options.get<std::string>("simName");
+  std::cout << " we got here.\n";
+
+  boost::filesystem::path dir(foldername);
+  if (boost::filesystem::create_directory(dir)) {
+    std::cout << "Successfully created output directory. \n";
+  } else {
+    std::cout  << "Was not able to create output directory, terminating program\n";
+  }
+
+  simOptions.outputPath = foldername + "/";
 
   /**************************************************/
   /* Now we run the actual simulations              */
@@ -169,7 +194,6 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
 
   std::cout << "Succefully completed " << nrOfRuns * nrOfProcesses
             << " runs of the simulation.\n";
-  // Process results
 }
 
 int main(int ac, char *av[]) {

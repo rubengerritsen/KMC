@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 struct SimulationOptions {
     int simID = 0;
     double maxTime = 1000000.0;
@@ -10,4 +11,5 @@ struct SimulationOptions {
     double EField_x = 0.0;
     int SEED = 12345;
     bool allSinglets = true;
+    std::string outputPath = ".";
 };

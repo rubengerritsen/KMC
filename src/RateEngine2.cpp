@@ -57,7 +57,7 @@ double RateEngine2::singletDissociationCT(Eigen::Vector3d dr, double deltaE,
                                           PType type) const {
   double totalEnergy;
   double CTBinding =
-      constants::hrt2ev * 1.0 / (4.0 * constants::nm2bohr * dr.norm());
+      constants::hrt2ev * 1.0 / (dielectricConstant * constants::nm2bohr * dr.norm());
   if (type == PType::hole) {
     totalEnergy =
         -deltaE + EField_x * charge[type] * dr[0] + singletBinding - CTBinding;
@@ -77,7 +77,7 @@ double RateEngine2::ctDissociation(Eigen::Vector3d dr, double deltaE,
                                    PType type) const {
   double totalEnergy;
   double CTBinding =
-      constants::hrt2ev * 1.0 / (4.0 * constants::nm2bohr * dr.norm());
+      constants::hrt2ev * 1.0 / (dielectricConstant  * constants::nm2bohr * dr.norm());
   if (type == PType::hole) {
     totalEnergy =
         -deltaE + EField_x * charge[type] * dr[0] + CTBinding;

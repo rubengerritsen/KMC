@@ -29,13 +29,13 @@ void KmcRun::runSimulation() {
   // out.registerParticlePositions(particleList, totalTime);
   // out.registerState(particleList, totalTime);
   out.registerNumbers(particleList, topol, totalTime);
+  out.registerState(particleList,totalTime);
 
   while (totalTime < simOptions.maxTime) {
     computeNextEventRates();
     executeNextEvent();
-    // out.registerParticlePositions(particleList, totalTime);
-    // out.registerState(particleList, totalTime);
     out.registerNumbers(particleList, topol, totalTime);
+    out.registerState(particleList,totalTime);
   }
   std::cout << std::endl;
 

@@ -39,28 +39,12 @@ void OutputManager::registerState(const std::vector<Particle> &particleList,
   if (outFile.is_open()) {
     outFile << boost::format("%12.5f") % time << " ";
     for (auto &part : particleList) {
-      outFile << boost::format("%d:%d:%-4d ") % part.isAlive() %
+      outFile << boost::format("%d %d %4d ") % part.isAlive() %
                      part.getType() % part.getLocation();
     }
     outFile << "\n";
   } else {
     std::cout << "Could not open output file for simID: " << simID << "\n";
-  }
-
-  std::array<int, 4> count{0};
-
-  if (outFileNR.is_open()) {
-    outFileNR << boost::format("%12.5f") % time << " ";
-    for (auto &part : particleList) {
-      if (part.isAlive()) {
-        count[part.getType()] += 1;
-      }
-    }
-
-    for (auto &nr : count) {
-      outFileNR << boost::format("%5d ") % nr;
-    }
-    outFileNR << "\n";
   }
 }
 

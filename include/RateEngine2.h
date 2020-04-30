@@ -13,6 +13,7 @@ public:
     charge = options.charge;
     alpha = options.alpha;
     attempt = options.attempt;
+    dielectricConstant = options.dieletricConstant;
   }
 
   double marcusRate(double jeff2, double lambda_ij, double deltaE, double dx,
@@ -27,6 +28,7 @@ private:
   double kBT;
   double EField_x;
   double sqrtDielectric; 
+  double dielectricConstant;
   std::array<double, 2> mu2;
   std::array<double, 4> charge;
   std::array<double, 4> alpha;

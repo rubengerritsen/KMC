@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Find dependencies
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-find_package (Boost COMPONENTS program_options REQUIRED)
+find_package (Boost COMPONENTS program_options filesystem REQUIRED)
 find_package(OpenMP)
 
 # Include directory that contains header/include files
