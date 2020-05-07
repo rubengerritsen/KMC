@@ -29,13 +29,17 @@ void KmcRun::runSimulation() {
   // out.registerParticlePositions(particleList, totalTime);
   // out.registerState(particleList, totalTime);
   out.registerNumbers(particleList, topol, totalTime);
-  out.registerState(particleList,totalTime);
+  if (simOptions.registerState == true) {
+    out.registerState(particleList, totalTime);
+  }
 
   while (totalTime < simOptions.maxTime) {
     computeNextEventRates();
     executeNextEvent();
     out.registerNumbers(particleList, topol, totalTime);
-    out.registerState(particleList,totalTime);
+    if (simOptions.registerState == true) {
+      out.registerState(particleList, totalTime);
+    }
   }
   std::cout << std::endl;
 
@@ -177,13 +181,14 @@ void KmcRun::computeNextEventRates() {
               !siteList[nb.nb].isOccupied(PType::hole) &&
               !siteList[nb.nb].isOccupied(PType::CT) &&
               !siteList[nb.nb].isOccupied(PType::sing)) {
-                // No CT-states with two same molecule types
-                if( topol.getMolType(part.getLocation()) != topol.getMolType(nb.nb)){
+            // No CT-states with two same molecule types
+            if (topol.getMolType(part.getLocation()) !=
+                topol.getMolType(nb.nb)) {
               next_event_list.pushNextEvent(nb.rate_s_ct_e,
                                             Transition::singToCTViaElec, i, nb);
               next_event_list.pushNextEvent(nb.rate_s_ct_h,
                                             Transition::singToCTViaHole, i, nb);
-                }
+            }
           }
         }
         break;

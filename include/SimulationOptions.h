@@ -11,5 +11,6 @@ struct SimulationOptions {
     double EField_x = 0.0;
     int SEED = 12345;
     bool allSinglets = true;
+    bool registerState = false;
     std::string outputPath = ".";
 };

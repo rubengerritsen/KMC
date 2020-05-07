@@ -114,6 +114,7 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   simOptions.kBT = options.get<double>("kBT");
   simOptions.EField_x = options.get<double>("electricField_x");
   simOptions.SEED = options.get<int>("SEED");
+  simOptions.registerState = options.get<bool>("registerState");
 
   int nrOfProcesses = options.get<int>("nrOfProcesses");
   int nrOfRuns = options.get<int>("nrOfRunsPerProcess");
