@@ -154,7 +154,6 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
       (boost::format("%04d%02d%02d_%02d%02d_") % ltm->tm_year % ltm->tm_mon %
           ltm->tm_mday % ltm->tm_hour % ltm->tm_min).str() +
       options.get<std::string>("simName");
-  std::cout << " we got here.\n";
 
   boost::filesystem::path dir(foldername);
   if (boost::filesystem::create_directory(dir)) {
@@ -162,6 +161,8 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   } else {
     std::cout  << "Was not able to create output directory, terminating program\n";
   }
+
+  boost::filesystem::copy_file(optionFile, foldername + "/options.xml");
 
   simOptions.outputPath = foldername + "/";
 
