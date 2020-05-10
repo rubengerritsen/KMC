@@ -23,7 +23,7 @@
   <pathToLambdas>../input/reorganisation.xml</pathToLambdas>
   <rates>
     <sqrtDielectric>1.51</sqrtDielectric>
-    <mu2 help="square of transition dipole moment for singlet decay (ben tcne)">0.05508 0.039497</mu2>
+    <mu2 help="square of transition dipole moment for singlet decay (ben tcne)">0.012 0.0105</mu2>
     <charge>-1.0 1.0 0.0 0.0</charge>
     <alpha>4.69 5.86 1.0 1.0</alpha>
     <attempt>2.49e4 5.63e4 1.0 1.0</attempt>
