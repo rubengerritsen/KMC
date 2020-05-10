@@ -12,5 +12,6 @@ struct SimulationOptions {
     int SEED = 12345;
     bool allSinglets = true;
     bool registerState = false;
+    int maxStep = 10000;
     std::string outputPath = ".";
 };

@@ -24,7 +24,7 @@ void KmcRun::runSimulation() {
 
   std::cout << "Initialization and setup done." << std::endl;
 
-  int progress = 0;
+  int step = 0;
 
   // out.registerParticlePositions(particleList, totalTime);
   // out.registerState(particleList, totalTime);
@@ -33,13 +33,14 @@ void KmcRun::runSimulation() {
     out.registerState(particleList, totalTime);
   }
 
-  while (totalTime < simOptions.maxTime) {
+  while (totalTime < simOptions.maxTime && step < simOptions.maxStep) {
     computeNextEventRates();
     executeNextEvent();
     out.registerNumbers(particleList, topol, totalTime);
     if (simOptions.registerState == true) {
       out.registerState(particleList, totalTime);
     }
+    step = step +1;
   }
   std::cout << std::endl;
 

@@ -2,12 +2,13 @@
 <options>
   <SEED>12345</SEED>
   <simName help="a name added to the output folder">sim</simName>
-  <allSinglets>1</allSinglets>
-  <registerState>0</registerState>
-  <maxTime help="picoseconds">1500</maxTime>
+  <allSinglets>0</allSinglets>
+  <registerState>1</registerState>
+  <maxTime help="picoseconds">5000</maxTime>
+  <maxStep>15</maxStep>
   <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
-  <nrOfRunsPerProcess>25</nrOfRunsPerProcess>
-  <nrOfProcesses>6</nrOfProcesses>
+  <nrOfRunsPerProcess>1</nrOfRunsPerProcess>
+  <nrOfProcesses>5</nrOfProcesses>
   <Xmax>10</Xmax>
   <Ymax>10</Ymax>
   <Zmax>10</Zmax>
@@ -15,10 +16,10 @@
   <electricField_x>0.0</electricField_x>
   <nrOfElectrons>0</nrOfElectrons>
   <nrOfHoles>0</nrOfHoles>
-  <nrOfSinglets>640</nrOfSinglets>
-  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct.txt</pathToSites>
-  <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev.txt</pathToShortNB>
-  <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev.txt</pathToLongNB>
+  <nrOfSinglets>1</nrOfSinglets>
+  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct_small.txt</pathToSites>
+  <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev_smallSystem.txt</pathToShortNB>
+  <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev_smallSystem.txt</pathToLongNB>
   <pathToLambdas>../input/reorganisation.xml</pathToLambdas>
   <rates>
     <sqrtDielectric>1.51</sqrtDielectric>
@@ -26,6 +27,6 @@
     <charge>-1.0 1.0 0.0 0.0</charge>
     <alpha>4.69 5.86 1.0 1.0</alpha>
     <attempt>2.49e4 5.63e4 1.0 1.0</attempt>
-    <dielectricConstant> 8.0</dielectricConstant>
+    <dielectricConstant>8.0</dielectricConstant>
   </rates>
 </options>

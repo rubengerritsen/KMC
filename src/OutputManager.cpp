@@ -39,8 +39,12 @@ void OutputManager::registerState(const std::vector<Particle> &particleList,
   if (outFile.is_open()) {
     outFile << boost::format("%12.5f") % time << " ";
     for (auto &part : particleList) {
-      outFile << boost::format("%d %d %4d ") % part.isAlive() %
+      outFile << boost::format("%d %d %d    ") % part.isAlive() %
                      part.getType() % part.getLocation();
+                     if( part.getType() == PType::CT){
+                       outFile << boost::format("%d %d %d    ") % part.isAlive() %
+                     part.getType() % part.getLocationCTelec();
+                     }
     }
     outFile << "\n";
   } else {
