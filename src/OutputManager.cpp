@@ -26,25 +26,24 @@ void OutputManager::registerState(const std::vector<Particle> &particleList,
                                   double time) {
 
   std::ofstream outFile;
-  std::ofstream outFileNR;
   if (firstTimeState) {
     outFile.open(stateFile);
-    outFileNR.open(numberFile);
     firstTimeState = false;
   } else {
     outFile.open(stateFile, std::fstream::app);
-    outFileNR.open(numberFile, std::fstream::app);
   }
 
   if (outFile.is_open()) {
     outFile << boost::format("%12.5f") % time << " ";
     for (auto &part : particleList) {
-      outFile << boost::format("%d %d %d    ") % part.isAlive() %
-                     part.getType() % part.getLocation();
-                     if( part.getType() == PType::CT){
-                       outFile << boost::format("%d %d %d    ") % part.isAlive() %
-                     part.getType() % part.getLocationCTelec();
-                     }
+      if (part.isAlive()) {
+        outFile << boost::format("%d %d    ") % part.getType() %
+                       part.getLocation();
+        if (part.getType() == PType::CT) {
+          outFile << boost::format("%d %d    ") % part.getType() %
+                         part.getLocationCTelec();
+        }
+      }
     }
     outFile << "\n";
   } else {
@@ -70,11 +69,11 @@ void OutputManager::registerNumbers(const std::vector<Particle> &particleList,
     for (auto &part : particleList) {
       if (part.isAlive()) {
         count[part.getType()] += 1;
-        if(topol.getMolType(part.getLocation()) == MType::ben){
-          count[part.getType()+4] += 1;
+        if (topol.getMolType(part.getLocation()) == MType::ben) {
+          count[part.getType() + 4] += 1;
         } else if (topol.getMolType(part.getLocation()) == MType::tcne) {
-          count[part.getType()+8] += 1;
-        }else {
+          count[part.getType() + 8] += 1;
+        } else {
           std::cout << "Unknown molecule type in outputmanager!\n";
           exit(EXIT_FAILURE);
         }

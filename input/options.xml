@@ -17,9 +17,9 @@
   <nrOfElectrons>0</nrOfElectrons>
   <nrOfHoles>0</nrOfHoles>
   <nrOfSinglets>1</nrOfSinglets>
-  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct_small.txt</pathToSites>
-  <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev_smallSystem.txt</pathToShortNB>
-  <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev_smallSystem.txt</pathToLongNB>
+  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct.txt</pathToSites>
+  <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev.txt</pathToShortNB>
+  <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev.txt</pathToLongNB>
   <pathToLambdas>../input/reorganisation.xml</pathToLambdas>
   <rates>
     <sqrtDielectric>1.51</sqrtDielectric>

@@ -1,16 +1,21 @@
 #include "Particle.h"
+#include "SimulationOptions.h"
+#include "Topology.h"
 #include <boost/format.hpp>
 #include <vector>
-#include "Topology.h"
-#include "SimulationOptions.h"
 
 class OutputManager {
 public:
-  OutputManager(SimulationOptions simOptions) : simID(simOptions.simID), simOptions(simOptions){
-    particlePathFile = simOptions.outputPath + (boost::format("%d_particlePaths.txt") % simID).str();
-    stateFile = simOptions.outputPath +  (boost::format("%d_state.txt") % simID).str();
-    numberFile = simOptions.outputPath + (boost::format("%d_numbers.txt") % simID).str();
-    siteFile = simOptions.outputPath + (boost::format("%d_sites.txt") % simID).str();
+  OutputManager(SimulationOptions simOptions)
+      : simID(simOptions.simID), simOptions(simOptions) {
+    particlePathFile = simOptions.outputPath +
+                       (boost::format("%d_particlePaths.txt") % simID).str();
+    stateFile =
+        simOptions.outputPath + (boost::format("%d_state.txt") % simID).str();
+    numberFile =
+        simOptions.outputPath + (boost::format("%d_numbers.txt") % simID).str();
+    siteFile =
+        simOptions.outputPath + (boost::format("%d_sites.txt") % simID).str();
   };
   void registerParticlePositions(const std::vector<Particle> &particleList,
                                  double time);
