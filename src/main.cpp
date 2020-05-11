@@ -161,6 +161,7 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
     std::cout << "Successfully created output directory. \n";
   } else {
     std::cout  << "Was not able to create output directory, terminating program\n";
+    exit(EXIT_FAILURE);
   }
 
   boost::filesystem::copy_file(optionFile, foldername + "/options.xml");

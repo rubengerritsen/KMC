@@ -5,10 +5,10 @@
   <allSinglets>0</allSinglets>
   <registerState>1</registerState>
   <maxTime help="picoseconds">5000</maxTime>
-  <maxStep>15</maxStep>
+  <maxStep>30</maxStep>
   <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
   <nrOfRunsPerProcess>1</nrOfRunsPerProcess>
-  <nrOfProcesses>5</nrOfProcesses>
+  <nrOfProcesses>1</nrOfProcesses>
   <Xmax>10</Xmax>
   <Ymax>10</Ymax>
   <Zmax>10</Zmax>
@@ -17,16 +17,16 @@
   <nrOfElectrons>0</nrOfElectrons>
   <nrOfHoles>0</nrOfHoles>
   <nrOfSinglets>1</nrOfSinglets>
-  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct.txt</pathToSites>
-  <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev.txt</pathToShortNB>
-  <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev.txt</pathToLongNB>
+  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct_small.txt</pathToSites>
+  <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev_smallSystem.txt</pathToShortNB>
+  <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev_smallSystem.txt</pathToLongNB>
   <pathToLambdas>../input/reorganisation.xml</pathToLambdas>
   <rates>
     <sqrtDielectric>1.51</sqrtDielectric>
-    <mu2 help="square of transition dipole moment for singlet decay (ben tcne)">0.012 0.0105</mu2>
+    <mu2 help="square of transition dipole moment for singlet decay (ben tcne)">1200 10500</mu2>
     <charge>-1.0 1.0 0.0 0.0</charge>
     <alpha>4.69 5.86 1.0 1.0</alpha>
     <attempt>2.49e4 5.63e4 1.0 1.0</attempt>
-    <dielectricConstant>8.0</dielectricConstant>
+    <dielectricConstant>16.0</dielectricConstant>
   </rates>
 </options>
