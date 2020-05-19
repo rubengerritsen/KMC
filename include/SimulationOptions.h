@@ -14,4 +14,6 @@ struct SimulationOptions {
     bool registerState = false;
     int maxStep = 10000;
     std::string outputPath = ".";
+    bool printRates = false;
+    double printTime;
 };

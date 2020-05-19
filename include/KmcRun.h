@@ -12,7 +12,6 @@
 #pragma once
 #include "EnumNames.h"
 #include "Neighbourlist.h"
-#include "NextEventList.h"
 #include "OutputManager.h"
 #include "RandomEngine.h"
 #include "RateEngine2.h"

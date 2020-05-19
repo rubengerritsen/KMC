@@ -1,4 +1,5 @@
 #include "OutputManager.h"
+#include "Neighbour.h"
 #include <fstream>
 
 void OutputManager::registerParticlePositions(
@@ -19,6 +20,48 @@ void OutputManager::registerParticlePositions(
     outFile << "\n";
   } else {
     std::cout << "Could not open output file for simID: " << simID << "\n";
+  }
+}
+
+void OutputManager::printRatesToFile(const Neighbourlist &nbList) {
+  std::ofstream outFile;
+  outFile.open(rateFile);
+  if (outFile.is_open()) {
+    outFile << boost::format(
+        "rate_e rate_h rate_s rate_h_s rate_e_s rate_s_ct_e rate_s_ct_h dist\n");
+    outFile << boost::format("shortRangNeighbours\n");
+    for (int i = 0; i < nbList.getNumberOfSites(); i++) {
+      for (auto &nb : nbList.getSRNeighbours(i)) {
+        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n") %
+                       nb.rate_e % nb.rate_h % nb.rate_s % nb.rate_h_s %
+                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.dr.norm();
+      }
+    }
+    outFile << boost::format("longRangNeighbours\n");
+    for (int i = 0; i < nbList.getNumberOfSites(); i++) {
+      for (auto &nb : nbList.getLRNeighbours(i)) {
+        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n") %
+                       nb.rate_e % nb.rate_h % nb.rate_s % nb.rate_h_s %
+                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.dr.norm();
+      }
+    }
+  } else {
+    std::cout << "Failed to open rateFile for simID: " << simID << "\n";
+  };
+}
+
+void OutputManager::printNextEventList(NextEventList &nextEventList){
+  std::ofstream outFile;
+  outFile.open(nextEventFile);
+  if (outFile.is_open()) {
+    const std::vector<Transition> &types = nextEventList.getEventTypes();
+    const std::vector<double> &rates = nextEventList.getRates();
+
+    for (int i = 0 ; i<rates.size(); i++){
+      outFile << boost::format("%d %.5e\n") % types[i] % rates[i];
+    }
+  }else{
+    std::cout << "Failed to open nextEvent Output file for simID: " << simID << "\n";
   }
 }
 

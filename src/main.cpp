@@ -116,6 +116,10 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   simOptions.SEED = options.get<int>("SEED");
   simOptions.registerState = options.get<bool>("registerState");
   simOptions.maxStep = options.get<int>("maxStep");
+  simOptions.printRates = options.get<bool>("printRates");
+  if (simOptions.printRates == true){
+      simOptions.printTime = options.get<double>("printTime");
+  }
 
   int nrOfProcesses = options.get<int>("nrOfProcesses");
   int nrOfRuns = options.get<int>("nrOfRunsPerProcess");

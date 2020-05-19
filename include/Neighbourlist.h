@@ -23,6 +23,8 @@ public:
     return lRNeighbours[site];
   }
 
+  int getNumberOfSites() const{ return sRNeighbours.size();}
+
 private:
   int numberOfSites;
   std::vector<std::vector<Neighbour>> sRNeighbours;
