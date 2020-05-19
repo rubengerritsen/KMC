@@ -45,6 +45,11 @@ void Neighbourlist::setupShortRangeNeighbours(std::string filename,
       temp2.rate_s_ct_e = rates.singletDissociationCT(-temp_dr, topol.getDeltaEnergy(id2,id1, PType::elec), topol.getSingletBindingEnergy(id1), PType::elec);
       temp1.rate_s_ct_h = rates.singletDissociationCT(temp_dr, topol.getDeltaEnergy(id1,id2, PType::hole), topol.getSingletBindingEnergy(id2), PType::hole);
       temp2.rate_s_ct_h = rates.singletDissociationCT(-temp_dr, topol.getDeltaEnergy(id2,id1, PType::hole), topol.getSingletBindingEnergy(id1), PType::hole);
+      // CT DISSOCIATION 
+      temp1.rate_ct_e = rates.ctDissociation(temp_dr, topol.getDeltaEnergy(id1, id2, PType::elec), PType::elec);
+      temp2.rate_ct_e = rates.ctDissociation(-temp_dr, topol.getDeltaEnergy(id2, id1, PType::elec), PType::elec);
+      temp1.rate_ct_h = rates.ctDissociation(temp_dr, topol.getDeltaEnergy(id1, id2, PType::hole), PType::hole);
+      temp2.rate_ct_h = rates.ctDissociation(-temp_dr, topol.getDeltaEnergy(id2, id1, PType::hole), PType::hole);
 
       sRNeighbours[id1].push_back(temp1);
       sRNeighbours[id2].push_back(temp2);

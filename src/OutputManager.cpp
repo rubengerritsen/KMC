@@ -28,23 +28,25 @@ void OutputManager::printRatesToFile(const Neighbourlist &nbList) {
   outFile.open(rateFile);
   if (outFile.is_open()) {
     outFile << boost::format(
-        "rate_e rate_h rate_s rate_h_s rate_e_s rate_s_ct_e rate_s_ct_h dist\n");
+        "rate_e rate_h rate_s rate_h_s rate_e_s rate_s_ct_e rate_s_ct_h rate_ct_e rate_ct_h dist\n");
     outFile << boost::format("shortRangNeighbours\n");
     for (int i = 0; i < nbList.getNumberOfSites(); i++) {
       for (auto &nb : nbList.getSRNeighbours(i)) {
-        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n") %
+        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n") %
                        nb.rate_e % nb.rate_h % nb.rate_s % nb.rate_h_s %
-                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.dr.norm();
+                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.rate_ct_e % nb.rate_ct_h % nb.dr.norm();
       }
     }
+    std::cout << "printed sr neighbours \n";
     outFile << boost::format("longRangNeighbours\n");
     for (int i = 0; i < nbList.getNumberOfSites(); i++) {
       for (auto &nb : nbList.getLRNeighbours(i)) {
-        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n") %
+        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n") %
                        nb.rate_e % nb.rate_h % nb.rate_s % nb.rate_h_s %
-                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.dr.norm();
+                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.rate_ct_e % nb.rate_ct_h % nb.dr.norm();
       }
     }
+    std::cout << "printed lr neighbours \n";
   } else {
     std::cout << "Failed to open rateFile for simID: " << simID << "\n";
   };

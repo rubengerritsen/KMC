@@ -9,5 +9,7 @@ struct Neighbour {
     double rate_e_s =0;
     double rate_s_ct_e = 0;
     double rate_s_ct_h = 0;
+    double rate_ct_e = 0;
+    double rate_ct_h = 0;
     Eigen::Vector3d dr;
 };

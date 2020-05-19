@@ -45,10 +45,6 @@ void KmcRun::runSimulation() {
     if (simOptions.registerState == true) {
       out.registerState(particleList, totalTime);
     }
-    if (simOptions.printRates == true && totalTime > simOptions.printTime && firstTime){
-      out.printNextEventList(next_event_list);
-      firstTime = false;
-    }
     step = step +1;
   }
   std::cout << std::endl;
