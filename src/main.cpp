@@ -92,17 +92,6 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
 
   topol.readReorganisationEnergies(options.get<std::string>("pathToLambdas"));
 
-  // Load Neighbourlist and precompute hopping rates
-  std::cout << "Loading neighbours from file this may take a while ...\n";
-  Neighbourlist nbList(topol.getNrOfSites());
-  nbList.setupShortRangeNeighbours(options.get<std::string>("pathToShortNB"),
-                                   topol);
-  nbList.setupLongRangeNeighbours(options.get<std::string>("pathToLongNB"),
-                                  topol);
-  std::cout << "Loaded neighbours from: "
-            << options.get<std::string>("pathToShortNB") << " and "
-            << options.get<std::string>("pathToLongNB") << std::endl;
-
   // Set simulation options
   SimulationOptions simOptions;
   simOptions.maxTime = options.get<double>("maxTime");
@@ -143,6 +132,17 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
     rOptions.attempt[i] = data;
   }
   topol.setRateOptions(rOptions);
+
+    // Load Neighbourlist and precompute hopping rates
+  std::cout << "Loading neighbours from file this may take a while ...\n";
+  Neighbourlist nbList(topol.getNrOfSites());
+  nbList.setupShortRangeNeighbours(options.get<std::string>("pathToShortNB"),
+                                   topol);
+  nbList.setupLongRangeNeighbours(options.get<std::string>("pathToLongNB"),
+                                  topol);
+  std::cout << "Loaded neighbours from: "
+            << options.get<std::string>("pathToShortNB") << " and "
+            << options.get<std::string>("pathToLongNB") << std::endl;
 
   // setup output folder
   struct tm *ltm;
