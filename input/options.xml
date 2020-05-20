@@ -17,7 +17,7 @@
   <nrOfElectrons>0</nrOfElectrons>
   <nrOfHoles>0</nrOfHoles>
   <nrOfSinglets>640</nrOfSinglets>
-  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct_shifted2.txt</pathToSites>
+  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct.txt</pathToSites>
   <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev.txt</pathToShortNB>
   <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev.txt</pathToLongNB>
   <pathToLambdas>../input/reorganisation.xml</pathToLambdas>
@@ -27,6 +27,6 @@
     <charge>-1.0 1.0 0.0 0.0</charge>
     <alpha>4.69 5.86 1.0 1.0</alpha>
     <attempt>2.49e4 5.63e4 1.0 1.0</attempt>
-    <dielectricConstant>40.0</dielectricConstant>
+    <dielectricConstant>8.0</dielectricConstant>
   </rates>
 </options>
