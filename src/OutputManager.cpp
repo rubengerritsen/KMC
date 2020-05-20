@@ -23,7 +23,7 @@ void OutputManager::registerParticlePositions(
   }
 }
 
-void OutputManager::printRatesToFile(const Neighbourlist &nbList) {
+void OutputManager::printRatesToFile(const Neighbourlist &nbList, const Topology topol) {
   std::ofstream outFile;
   outFile.open(rateFile);
   if (outFile.is_open()) {
@@ -39,13 +39,12 @@ void OutputManager::printRatesToFile(const Neighbourlist &nbList) {
     }
     std::cout << "printed sr neighbours \n";
     outFile << boost::format("longRangNeighbours\n");
-  /*  for (int i = 0; i < nbList.getNumberOfSites(); i++) {
+    for (int i = 0; i < nbList.getNumberOfSites(); i++) {
       for (auto &nb : nbList.getLRNeighbours(i)) {
-        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n") %
-                       nb.rate_e % nb.rate_h % nb.rate_s % nb.rate_h_s %
-                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.rate_ct_e % nb.rate_ct_h % nb.dr.norm();
+        outFile << boost::format("%.5e %.5e %d %d\n") %
+                        nb.rate_s % nb.dr.norm() % topol.getMolType(i) % topol.getMolType(nb.nb);
       }
-    } */
+    } 
     std::cout << "printed lr neighbours \n";
   } else {
     std::cout << "Failed to open rateFile for simID: " << simID << "\n";

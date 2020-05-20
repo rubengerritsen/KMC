@@ -25,7 +25,7 @@ public:
 
   void registerParticlePositions(const std::vector<Particle> &particleList,
                                  double time);
-  void printRatesToFile(const Neighbourlist &nblist);
+  void printRatesToFile(const Neighbourlist &nblist, const Topology topol);
   void registerState(const std::vector<Particle> &particleList, double time);
   void registerNumbers(const std::vector<Particle> &particleList,
                        const Topology &topol, double time);

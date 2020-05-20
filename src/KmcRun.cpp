@@ -35,7 +35,7 @@ void KmcRun::runSimulation() {
   }
 
   if (simOptions.printRates == true && simOptions.simID == 0){
-    out.printRatesToFile(nbList);
+    out.printRatesToFile(nbList, topol);
   }
 
   while (totalTime < simOptions.maxTime && step < simOptions.maxStep) {
