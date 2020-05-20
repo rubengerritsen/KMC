@@ -1,7 +1,5 @@
 # KMC
 
-## Work in progress
-
 This is a kinetic Monte Carlo simulator for optoelectronic processes in disordered organic materials. Currently it is specifically made for a model system of TCNE and benzene.
 
 ### Dependencies
