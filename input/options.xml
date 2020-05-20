@@ -29,6 +29,6 @@
     <charge>-1.0 1.0 0.0 0.0</charge>
     <alpha>4.69 5.86 1.0 1.0</alpha>
     <attempt>2.49e4 5.63e4 1.0 1.0</attempt>
-    <dielectricConstant>8.0</dielectricConstant>
+    <dielectricConstant>16.0</dielectricConstant>
   </rates>
 </options>

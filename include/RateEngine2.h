@@ -4,6 +4,7 @@
 #include "constants.h"
 #include <Eigen/Dense>
 #include "RateOptions.h"
+#include <iostream>
 
 class RateEngine2 {
 public:
@@ -14,6 +15,7 @@ public:
     alpha = options.alpha;
     attempt = options.attempt;
     dielectricConstant = options.dieletricConstant;
+    std::cout << kBT << " " << dielectricConstant << "\n";
   }
 
   double marcusRate(double jeff2, double lambda_ij, double deltaE, double dx,

@@ -92,17 +92,6 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
 
   topol.readReorganisationEnergies(options.get<std::string>("pathToLambdas"));
 
-  // Load Neighbourlist and precompute hopping rates
-  std::cout << "Loading neighbours from file this may take a while ...\n";
-  Neighbourlist nbList(topol.getNrOfSites());
-  nbList.setupShortRangeNeighbours(options.get<std::string>("pathToShortNB"),
-                                   topol);
-  nbList.setupLongRangeNeighbours(options.get<std::string>("pathToLongNB"),
-                                  topol);
-  std::cout << "Loaded neighbours from: "
-            << options.get<std::string>("pathToShortNB") << " and "
-            << options.get<std::string>("pathToLongNB") << std::endl;
-
   // Set simulation options
   SimulationOptions simOptions;
   simOptions.maxTime = options.get<double>("maxTime");
@@ -117,8 +106,8 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   simOptions.registerState = options.get<bool>("registerState");
   simOptions.maxStep = options.get<int>("maxStep");
   simOptions.printRates = options.get<bool>("printRates");
-  if (simOptions.printRates == true){
-      simOptions.printTime = options.get<double>("printTime");
+  if (simOptions.printRates == true) {
+    simOptions.printTime = options.get<double>("printTime");
   }
 
   int nrOfProcesses = options.get<int>("nrOfProcesses");
@@ -148,6 +137,17 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   }
   topol.setRateOptions(rOptions);
 
+  // Load Neighbourlist and precompute hopping rates
+  std::cout << "Loading neighbours from file this may take a while ...\n";
+  Neighbourlist nbList(topol.getNrOfSites());
+  nbList.setupShortRangeNeighbours(options.get<std::string>("pathToShortNB"),
+                                   topol);
+  nbList.setupLongRangeNeighbours(options.get<std::string>("pathToLongNB"),
+                                  topol);
+  std::cout << "Loaded neighbours from: "
+            << options.get<std::string>("pathToShortNB") << " and "
+            << options.get<std::string>("pathToLongNB") << std::endl;
+
   // setup output folder
   struct tm *ltm;
   time_t now = time(0);
@@ -157,14 +157,16 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   std::string foldername =
       "./" +
       (boost::format("%04d%02d%02d_%02d%02d_") % ltm->tm_year % ltm->tm_mon %
-          ltm->tm_mday % ltm->tm_hour % ltm->tm_min).str() +
+       ltm->tm_mday % ltm->tm_hour % ltm->tm_min)
+          .str() +
       options.get<std::string>("simName");
 
   boost::filesystem::path dir(foldername);
   if (boost::filesystem::create_directory(dir)) {
     std::cout << "Successfully created output directory. \n";
   } else {
-    std::cout  << "Was not able to create output directory, terminating program\n";
+    std::cout
+        << "Was not able to create output directory, terminating program\n";
     exit(EXIT_FAILURE);
   }
 
