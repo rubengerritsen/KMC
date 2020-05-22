@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <options>
   <SEED>12345</SEED>
-  <simName help="a name added to the output folder">sim</simName>
-  <allSinglets>0</allSinglets>
+  <simName help="a name added to the output folder">natural_allSinglet</simName>
+  <allSinglets>1</allSinglets>
   <registerState>0</registerState>
-  <maxTime help="picoseconds">1000</maxTime>
-  <maxStep>400000</maxStep>
+  <maxTime help="picoseconds">1500</maxTime>
+  <maxStep>4000000</maxStep>
   <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
   <nrOfRunsPerProcess>1</nrOfRunsPerProcess>
   <nrOfProcesses>1</nrOfProcesses>
