@@ -40,9 +40,6 @@ void KmcRun::runSimulation() {
     if (simOptions.registerState == true) {
       out.registerState(particleList, totalTime);
     }
-    if(step %1000 == 0){
-      std::cout << "step is: " << step << " time is: " << totalTime << "\n";
-    }
     step = step +1;
   }
   std::cout << std::endl;
