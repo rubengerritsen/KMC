@@ -1,9 +1,11 @@
-# KMC
+# KMC (time of flight)
 
-## Work in progress
 
-This will be a kinetic Monte Carlo simulator for optoelectronic processes in disordered organic materials.
+To compile and run this you only need to run one command `./run` in the main directory.
+You maybe need to make run executable with `chomd +x run`.
 
-### Dependencies
+## Dependencies
 
-The current implementation uses some functionality from the Eigen and Boost libraries, see <http://eigen.tuxfamily.org/> and <https://www.boost.org/>.
+To make it work make sure you have the Boost and Eigen libraries installed.
+These are the same dependencies as VOTCA has. So if VOTCA works this will work.
+

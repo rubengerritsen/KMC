@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# check if directory build exists if not create it
+[ ! -d "./build" ] && mkdir build
+
+# go into build
+cd build
+
+# if option c is provided do a clean build
+if [ "$1" = "c" ]; then
+    echo "clean build"
+    rm CMakeCache.txt
+fi
+
+# configure 
+cmake ..
+# build
+cmake --build . -j4
+# run
+./KMC

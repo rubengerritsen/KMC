@@ -4,8 +4,8 @@
   <simName help="a name added to the output folder">sim</simName>
   <allSinglets>0</allSinglets>
   <registerState>0</registerState>
-  <maxTime help="picoseconds">1000</maxTime>
-  <maxStep>400000</maxStep>
+  <maxTime help="picoseconds">10</maxTime>
+  <maxStep>100</maxStep>
   <timeStep help="output will be printed every timeStepth time">0.1</timeStep>
   <nrOfRunsPerProcess>1</nrOfRunsPerProcess>
   <nrOfProcesses>1</nrOfProcesses>
@@ -16,10 +16,10 @@
   <electricField_x>0.0</electricField_x>
   <nrOfElectrons>0</nrOfElectrons>
   <nrOfHoles>0</nrOfHoles>
-  <nrOfSinglets>640</nrOfSinglets>
-  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct.txt</pathToSites>
-  <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev.txt</pathToShortNB>
-  <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev.txt</pathToLongNB>
+  <nrOfSinglets>6</nrOfSinglets>
+  <pathToSites help="path to file with sites and energies">../input/sitesAndEnergies_correct_small.txt</pathToSites>
+  <pathToShortNB help="path to file with short range neighbours">../input/shortNB_ev_smallSystem.txt</pathToShortNB>
+  <pathToLongNB help="path to file with long range neighbours">../input/longNB_ev_smallSystem.txt</pathToLongNB>
   <pathToLambdas>../input/reorganisation.xml</pathToLambdas>
   <rates>
     <sqrtDielectric>1.51</sqrtDielectric>
