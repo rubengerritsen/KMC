@@ -32,9 +32,9 @@ void OutputManager::printRatesToFile(const Neighbourlist &nbList, const Topology
     outFile << boost::format("shortRangNeighbours\n");
     for (int i = 0; i < nbList.getNumberOfSites(); i++) {
       for (auto &nb : nbList.getSRNeighbours(i)) {
-        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e\n") %
+        outFile << boost::format("%.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %.5e %d %d\n") %
                        nb.rate_e % nb.rate_h % nb.rate_s % nb.rate_h_s %
-                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.rate_ct_e % nb.rate_ct_h % nb.dr.norm();
+                       nb.rate_e_s % nb.rate_s_ct_e % nb.rate_s_ct_h % nb.rate_ct_e % nb.rate_ct_h % nb.dr.norm() % topol.getMolType(i) % topol.getMolType(nb.nb);
       }
     }
     std::cout << "printed sr neighbours \n";
