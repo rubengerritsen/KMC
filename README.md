@@ -68,7 +68,7 @@ If you specify 3 holes (or electrons), these holes will be placed on the first 3
 site 0, 1 and 2 from the sites.txt file). Then the normal KMC algorithm is run. As soon as a hole reaches the sink (indicated in the option file), the hole is removed from the simulation and the time is registered and printed to a file, this is done until all holes (or electrons) have reached the sink.
 
 ## Results
-The results are collected in a folder with the date, time and simulation ID (`simName` in the option file). The file is called `tof.txt` to get a quick idea of the time of flight you can run the script below to get the average time of flight for the first, second, ... particle.
+The results are collected in a folder within the build directory, this folder is labeled with the date, time and simulation ID (`simName` in the option file). The file is called `tof.txt` to get a quick idea of the time of flight you can run the script below to get the average time of flight for the first, second, ... particle.
 
 ```python
 #!/usr/bin/env python3
