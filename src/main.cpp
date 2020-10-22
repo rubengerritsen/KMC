@@ -95,6 +95,7 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   simOptions.nrOfHoles = options.get<int>("nrOfHoles");
   simOptions.SEED = options.get<int>("SEED");
   simOptions.maxStep = options.get<int>("maxStep");
+  simOptions.sink = options.get<int>("sink");
 
   int nrOfProcesses = options.get<int>("nrOfProcesses");
   int nrOfRuns = options.get<int>("nrOfRunsPerProcess");
@@ -114,8 +115,8 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   ltm->tm_year = ltm->tm_year + 1900;
   std::string foldername =
       "./" +
-      (boost::format("%04d%02d%02d_%02d%02d_") % ltm->tm_year % ltm->tm_mon %
-       ltm->tm_mday % ltm->tm_hour % ltm->tm_min)
+      (boost::format("%04d%02d%02d_%02d%02d%02d_") % ltm->tm_year %
+       ltm->tm_mon % ltm->tm_mday % ltm->tm_hour % ltm->tm_min % ltm->tm_sec)
           .str() +
       options.get<std::string>("simName");
 

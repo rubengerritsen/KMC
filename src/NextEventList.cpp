@@ -20,8 +20,11 @@ NextEventList::getNextEvent(double random01) const {
 
   if (totalRate <= 0.0 || cPos == 0) {
     std::cout << "\nNo next event, program done.\n";
-    exit(EXIT_SUCCESS);
+    // We need to return something but in reality we only care about "done"
+    return std::tuple<Transition, int, Neighbour>{Transition::done, 0,
+                                                  newLocation[0]};
   }
+
   for (int i = 0; i < cPos;
        ++i) { // Note cPos here is smaller then rateList.size()
     cumSum += rateList[i];

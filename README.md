@@ -29,6 +29,7 @@ It should contain the site locations, every site is put on a new line i.e.
 .
 .
 ```
+Since the coordinates are not used in the actual simulation you can also use fake coordinates, that is what I did in the example file.
 
 ### 2. A Neigbour List
 A neigbourlist is a file with the neigbours and a rate, if a particle can jump from site 0 to site 5 with rate 0.2 than we would add a line `0 5 0.2` to the neigbourlist file. We need to add another pair for the other way around, so a hop from 5 to 0 could have a different rate, say 0.3, then we add `5 0 0.3`. 
@@ -45,6 +46,7 @@ A neigbourlist is a file with the neigbours and a rate, if a particle can jump f
 ```xml
 <?xml version="1.0"?>
 <options>
+  <sink help="numbering starts at 0!">6</sink>
   <SEED help="SEED for random number generator">12345</SEED>
   <simName help="prefix to output folder, can be used as identifier">sim</simName>
   <maxTime help="picoseconds">10</maxTime>
@@ -64,3 +66,20 @@ A neigbourlist is a file with the neigbours and a rate, if a particle can jump f
 ## What the simulator does
 If you specify 3 holes (or electrons), these holes will be placed on the first 3 sites (i.e
 site 0, 1 and 2 from the sites.txt file). Then the normal KMC algorithm is run. As soon as a hole reaches the sink (indicated in the option file), the hole is removed from the simulation and the time is registered and printed to a file, this is done until all holes (or electrons) have reached the sink.
+
+## Results
+The results are collected in a folder with the date, time and simulation ID (`simName` in the option file). The file is called `tof.txt` to get a quick idea of the time of flight you can run the script below to get the average time of flight for the first, second, ... particle.
+
+```python
+#!/usr/bin/env python3
+
+import numpy as np
+
+data = np.loadtxt("tof.txt")
+mean = np.mean(data, axis=0)
+std  = np.std(data, axis=0)   
+    
+np.set_printoptions(formatter={'float': '{: 7.2f}'.format})
+print(mean)
+print(std)
+```

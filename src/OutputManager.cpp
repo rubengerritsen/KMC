@@ -1,6 +1,27 @@
 #include "OutputManager.h"
 #include <fstream>
 
+void OutputManager::registerTOF(const double time) {
+  std::ofstream outFile;
+  outFile.open(tofFile, std::fstream::app);
+
+  if (outFile.is_open()) {
+    outFile << boost::format("%10.5f ") % time;
+  } else {
+    std::cout << "Could not open output file" << std::endl;
+  }
+}
+
+void OutputManager::endTOF() {
+  std::ofstream outFile;
+  outFile.open(tofFile, std::fstream::app);
+  if (outFile.is_open()) {
+    outFile << std::endl;
+  } else {
+    std::cout << "Could not open output file" << std::endl;
+  }
+}
+
 void OutputManager::registerParticlePositions(
     const std::vector<Particle> &particleList, double time) {
 

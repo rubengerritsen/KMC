@@ -60,5 +60,5 @@ private:
   void initializeNeighbours();
   void initializeParticles();
   void computeNextEventList();
-  void executeNextEvent();
+  bool executeNextEvent();
 };

@@ -16,12 +16,16 @@ public:
         simOptions.outputPath + (boost::format("%d_numbers.txt") % simID).str();
     siteFile =
         simOptions.outputPath + (boost::format("%d_sites.txt") % simID).str();
+    tofFile = simOptions.outputPath + "tof.txt";
   };
   void registerParticlePositions(const std::vector<Particle> &particleList,
                                  double time);
   void registerState(const std::vector<Particle> &particleList, double time);
   void registerNumbers(const std::vector<Particle> &particleList,
                        const Topology &topol, double time);
+
+  void registerTOF(const double time);
+  void endTOF();
 
 private:
   int simID;
@@ -30,6 +34,7 @@ private:
   std::string stateFile;
   std::string numberFile;
   std::string siteFile;
+  std::string tofFile;
   bool firstTimePath = true;
   bool firstTimeState = true;
   bool firstTimeNumber = true;

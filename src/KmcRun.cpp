@@ -25,14 +25,18 @@ void KmcRun::runSimulation() {
   std::cout << "Initialization and setup done." << std::endl;
 
   int step = 0;
-
+  bool lastEvent;
   while (totalTime < simOptions.maxTime && step < simOptions.maxStep) {
     std::cout << "\r" << double(step) / simOptions.maxStep << "%" << std::flush;
     computeNextEventList();
-    executeNextEvent();
+    lastEvent = executeNextEvent();
+    if (lastEvent) {
+      break;
+    }
     step = step + 1;
   }
   std::cout << std::endl;
+  out.endTOF();
 
   // OutputManager out;
   // out.printSiteOccupations(siteList, totalTime);
@@ -43,6 +47,9 @@ void KmcRun::runSimulation() {
       << "Total simulation time: "
       << (std::chrono::duration_cast<std::chrono::seconds>(end - begin).count())
       << "s" << std::endl;
+  std::cout
+      << "\n****************************************************************\n"
+      << std::endl;
 }
 
 void KmcRun::initializeSites() {
@@ -57,10 +64,6 @@ void KmcRun::initializeParticles() {
   /* electrons */
   for (int i = 0; i < simOptions.nrOfElectrons; ++i) {
     location = i;
-    while (siteList[location].isOccupied(PType::elec)) { // Get a unique
-      // location
-      location = random_engine.getRandomSite();
-    }
     tempParticle = new Particle(location, PType::elec);
     particleList.push_back(*tempParticle);
     siteList[location].setOccupied(PType::elec, partID, 0.0);
@@ -68,11 +71,7 @@ void KmcRun::initializeParticles() {
   }
   /* holes */
   for (int i = 0; i < simOptions.nrOfHoles; ++i) {
-    location = random_engine.getRandomSite();
-    while (
-        siteList[location].isOccupied(PType::hole)) { // Get a unique location
-      location = random_engine.getRandomSite();
-    }
+    location = i;
     tempParticle = new Particle(location, PType::hole);
     particleList.push_back(*tempParticle);
     siteList[location].setOccupied(PType::hole, partID, 0.0);
@@ -117,12 +116,17 @@ void KmcRun::computeNextEventList() {
   }
 }
 
-void KmcRun::executeNextEvent() {
+bool KmcRun::executeNextEvent() {
   totalTime +=
       random_engine.getInterArrivalTime(next_event_list.getTotalRate());
 
   std::tuple<Transition, int, Neighbour> nextEvent =
       next_event_list.getNextEvent(random_engine.getUniform01());
+
+  if (std::get<0>(nextEvent) == Transition::done) {
+    bool noNextEvents = true;
+    return noNextEvents;
+  }
 
   int partID = std::get<1>(nextEvent);
   Particle &part = particleList[partID];
@@ -135,9 +139,15 @@ void KmcRun::executeNextEvent() {
 
   switch (std::get<0>(nextEvent)) {
   case Transition::normalhop:
-    part.jumpTo(newLocation.nb, newLocation.dr);
-    siteList[oldLocation].freeSite(part.getType(), totalTime);
-    siteList[newLocation.nb].setOccupied(part.getType(), partID, totalTime);
+    if (newLocation.nb == simOptions.sink) {
+      siteList[oldLocation].freeSite(part.getType(), totalTime);
+      part.killParticle(totalTime);
+      out.registerTOF(totalTime);
+    } else {
+      part.jumpTo(newLocation.nb, newLocation.dr);
+      siteList[oldLocation].freeSite(part.getType(), totalTime);
+      siteList[newLocation.nb].setOccupied(part.getType(), partID, totalTime);
+    }
     break;
   default:
     std::cout
@@ -145,4 +155,5 @@ void KmcRun::executeNextEvent() {
         << std::endl;
     exit(EXIT_FAILURE);
   }
+  return false;
 }
