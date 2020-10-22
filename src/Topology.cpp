@@ -1,9 +1,9 @@
 #include "Topology.h"
 #include "EnumNames.h"
-#include <fstream>
-#include <iostream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <fstream>
+#include <iostream>
 
 void Topology::readTopologyFromFile(std::string filename) {
   std::ifstream file(filename);
@@ -13,22 +13,9 @@ void Topology::readTopologyFromFile(std::string filename) {
     std::string molName;
     Eigen::Vector3d tempCoord;
     std::vector<double> tempENG(3);
-    while (file >> x >> y >> z >> eng_e >> eng_h >> eng_s >> molName) {
+    while (file >> x >> y >> z) {
       tempCoord << x, y, z;
       siteLocations.push_back(tempCoord);
-      tempENG[PType::elec] = eng_e;
-      tempENG[PType::hole] = eng_h;
-      tempENG[PType::sing] = eng_s;
-      siteEnergies.push_back(tempENG);
-      if (molName == "J3RZ") {
-        moleculeType.push_back(MType::tcne);
-      }else if (molName == "GGZZ"){
-        moleculeType.push_back(MType::ben);
-      } else{
-        std::cout << "Unknown molecule type, terminating program." << std::endl;
-        exit(EXIT_FAILURE);
-      }
-      
     }
   } else {
     std::cout << "Unable to open topology file: " << filename << std::endl;
@@ -37,11 +24,11 @@ void Topology::readTopologyFromFile(std::string filename) {
   }
 }
 
-void Topology::readReorganisationEnergies(std::string filename){
+void Topology::readReorganisationEnergies(std::string filename) {
   boost::property_tree::ptree pt, lambdas;
   read_xml(filename, pt);
   lambdas = pt.get_child("lambdas");
-  
+
   /* Obviously this is no long term solution */
   std::string moleculeName = "benzene";
   MType molType = MType::ben;
@@ -71,10 +58,10 @@ void Topology::printHead(int nrOfItems) const {
   }
 }
 
-void Topology::printReorganisationEnergies(){
+void Topology::printReorganisationEnergies() {
   std::cout << "some reorganisation energies lambda xton for benzene:\n";
-  for (int i =0; i<3; i++){
-  std::cout << lambdaXtoN[MType::ben][i] << " ";
+  for (int i = 0; i < 3; i++) {
+    std::cout << lambdaXtoN[MType::ben][i] << " ";
   }
   std::cout << std::endl;
 }

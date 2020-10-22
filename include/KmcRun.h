@@ -27,7 +27,8 @@ public:
   KmcRun(const Topology &topol, const Neighbourlist &nbList,
          const SimulationOptions simOptions)
       : topol(topol), nbList(nbList),
-        rate_engine(simOptions.EField_x, simOptions.kBT, topol.getRateOptions()),
+        rate_engine(simOptions.EField_x, simOptions.kBT,
+                    topol.getRateOptions()),
         simOptions(simOptions), random_engine(simOptions.SEED),
         out(simOptions) {
     int totalNrOfParticles;
@@ -58,6 +59,6 @@ private:
   void initializeSites();
   void initializeNeighbours();
   void initializeParticles();
-  void computeNextEventRates();
+  void computeNextEventList();
   void executeNextEvent();
 };

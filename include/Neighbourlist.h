@@ -8,23 +8,17 @@
 class Neighbourlist {
 public:
   Neighbourlist(int numberOfSites) : numberOfSites{numberOfSites} {
-    sRNeighbours.resize(numberOfSites);
-    lRNeighbours.resize(numberOfSites);
+    Neighbours.resize(numberOfSites);
   }
 
-  void setupShortRangeNeighbours(std::string filename, const Topology &topol);
-  void setupLongRangeNeighbours(std::string filename, const Topology &topol);
+  void setupNeighbours(std::string filename, const Topology &topol);
   void printNeighboursOf(int site);
 
-  const std::vector<Neighbour> &getSRNeighbours(int site) const {
-    return sRNeighbours[site];
-  }
-  const std::vector<Neighbour> &getLRNeighbours(int site) const {
-    return lRNeighbours[site];
+  const std::vector<Neighbour> &getNeighbours(int site) const {
+    return Neighbours[site];
   }
 
 private:
   int numberOfSites;
-  std::vector<std::vector<Neighbour>> sRNeighbours;
-  std::vector<std::vector<Neighbour>> lRNeighbours;
+  std::vector<std::vector<Neighbour>> Neighbours;
 };

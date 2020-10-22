@@ -22,7 +22,6 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include <omp.h>
 #include <sstream>
 #include <string>
 #include <sys/wait.h>
@@ -84,65 +83,28 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   options = pt.get_child("options");
 
   // Load Topology
-  Topology topol(options.get<double>("kBT"),
-                 options.get<double>("electricField_x"));
+  Topology topol;
   topol.readTopologyFromFile(options.get<std::string>("pathToSites"));
   std::cout << "Loaded " << topol.getNrOfSites() << " sites from "
             << options.get<std::string>("pathToSites") << std::endl;
 
-  topol.readReorganisationEnergies(options.get<std::string>("pathToLambdas"));
-
   // Set simulation options
   SimulationOptions simOptions;
   simOptions.maxTime = options.get<double>("maxTime");
-  simOptions.allSinglets = options.get<bool>("allSinglets");
-  simOptions.printAt = options.get<double>("timeStep");
   simOptions.nrOfElectrons = options.get<int>("nrOfElectrons");
   simOptions.nrOfHoles = options.get<int>("nrOfHoles");
-  simOptions.nrOfSinglets = options.get<int>("nrOfSinglets");
-  simOptions.kBT = options.get<double>("kBT");
-  simOptions.EField_x = options.get<double>("electricField_x");
   simOptions.SEED = options.get<int>("SEED");
-  simOptions.registerState = options.get<bool>("registerState");
   simOptions.maxStep = options.get<int>("maxStep");
 
   int nrOfProcesses = options.get<int>("nrOfProcesses");
   int nrOfRuns = options.get<int>("nrOfRunsPerProcess");
 
-  // Set rate options
-  RateOptions rOptions;
-  rOptions.sqrtDielectric = options.get<double>("rates.sqrtDielectric");
-  rOptions.dieletricConstant = options.get<double>("rates.dielectricConstant");
-  std::stringstream mu2(options.get_child("rates.mu2").data());
-  std::stringstream charge(options.get_child("rates.charge").data());
-  std::stringstream alpha(options.get_child("rates.alpha").data());
-  std::stringstream attempt(options.get_child("rates.attempt").data());
-
-  float data;
-  for (int i = 0; i < 2; i++) {
-    mu2 >> data;
-    rOptions.mu2[i] = data;
-  }
-  for (int i = 0; i < 4; i++) {
-    charge >> data;
-    rOptions.charge[i] = data;
-    alpha >> data;
-    rOptions.alpha[i] = data;
-    attempt >> data;
-    rOptions.attempt[i] = data;
-  }
-  topol.setRateOptions(rOptions);
-
-    // Load Neighbourlist and precompute hopping rates
+  // Load Neighbourlist and precompute hopping rates
   std::cout << "Loading neighbours from file this may take a while ...\n";
   Neighbourlist nbList(topol.getNrOfSites());
-  nbList.setupShortRangeNeighbours(options.get<std::string>("pathToShortNB"),
-                                   topol);
-  nbList.setupLongRangeNeighbours(options.get<std::string>("pathToLongNB"),
-                                  topol);
+  nbList.setupNeighbours(options.get<std::string>("pathToNBList"), topol);
   std::cout << "Loaded neighbours from: "
-            << options.get<std::string>("pathToShortNB") << " and "
-            << options.get<std::string>("pathToLongNB") << std::endl;
+            << options.get<std::string>("pathToNBList") << std::endl;
 
   // setup output folder
   struct tm *ltm;
@@ -153,14 +115,16 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
   std::string foldername =
       "./" +
       (boost::format("%04d%02d%02d_%02d%02d_") % ltm->tm_year % ltm->tm_mon %
-          ltm->tm_mday % ltm->tm_hour % ltm->tm_min).str() +
+       ltm->tm_mday % ltm->tm_hour % ltm->tm_min)
+          .str() +
       options.get<std::string>("simName");
 
   boost::filesystem::path dir(foldername);
   if (boost::filesystem::create_directory(dir)) {
     std::cout << "Successfully created output directory. \n";
   } else {
-    std::cout  << "Was not able to create output directory, terminating program\n";
+    std::cout
+        << "Was not able to create output directory, terminating program\n";
     exit(EXIT_FAILURE);
   }
 
@@ -193,10 +157,11 @@ void setupAndExecuteSimulation(int ac, char *av[]) {
     }
   }
   // This is only executed in the parent process
-  while ((wpid = wait(&status)) > 0)
+  while ((wpid = wait(&status)) > 0) { // waiting for all child processes
     ;
+  }
 
-  std::cout << "Succefully completed " << nrOfRuns * nrOfProcesses
+  std::cout << "Successfully completed " << nrOfRuns * nrOfProcesses
             << " runs of the simulation.\n";
 }
 
